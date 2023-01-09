@@ -31,6 +31,8 @@ export type DrawboardCommands = {
   setPathType: (pathType: PathType) => void;
   setBackgroundColor: (backgroundColor?: any) => void;
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void;
+  getElement: (index: number) => DrawingElement | undefined;
+  addElement: (e: DrawingElement) => void;
 };
 
 export type DrawboardContextType = {
@@ -53,8 +55,8 @@ const DrawContext = createContext<DrawboardContextType>({
 export default function DrawProvider({children}: {children: ReactElement[]}) {
   const [menu, setMenu] = useState<ToobarMemu>('drawing');
   const [elements, setElements] = useState<DrawingElement[]>([]);
-  const [color, setColor] = useState<any>('#333');
-  const [size, setSize] = useState<number>(2);
+  const [color, setColor] = useState<any>('#ffffff');
+  const [size, setSize] = useState<number>(6);
   const [pathType, setPathType] = useState<PathType>('normal');
   const [backgroundColor, setBackgroundColor] = useState<any>('#333');
   const [selectedElement, setSelectedElement] = useState<
@@ -69,6 +71,9 @@ export default function DrawProvider({children}: {children: ReactElement[]}) {
     setPathType,
     setBackgroundColor,
     setSelectedElement,
+    getElement: (index: number) => elements[index] || undefined,
+    addElement: (e: DrawingElement) =>
+      setElements(elements => [...elements, e]),
   };
 
   return (
