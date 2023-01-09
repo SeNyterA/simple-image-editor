@@ -9,7 +9,9 @@ export type ToobarMemu =
   | 'colors'
   | 'text'
   | 'save'
-  | 'delete';
+  | 'delete'
+  | 'addText'
+  | 'editText';
 
 export type DrawboardState = {
   menu: ToobarMemu;
@@ -21,13 +23,22 @@ export type DrawboardState = {
   pathType: PathType;
 };
 
+export type DrawboardCommands = {
+  setMenu: (menu: ToobarMemu) => void;
+  setElements: (elements: DrawingElement[]) => void;
+  setColor: (color: any) => void;
+  setSize: (size: number) => void;
+  setPathType: (pathType: PathType) => void;
+  setBackgroundColor: (backgroundColor?: any) => void;
+  setSelectedElement: (selectedElement: DrawingElement | undefined) => void;
+};
+
 export type DrawboardContextType = {
-  commands: any;
+  commands?: DrawboardCommands;
   state: DrawboardState;
 };
 
 const DrawContext = createContext<DrawboardContextType>({
-  commands: [],
   state: {
     menu: 'drawing',
     elements: [],
@@ -39,7 +50,7 @@ const DrawContext = createContext<DrawboardContextType>({
   },
 });
 
-export default function DrawProvider({children}: {children: ReactElement}) {
+export default function DrawProvider({children}: {children: ReactElement[]}) {
   const [menu, setMenu] = useState<ToobarMemu>('drawing');
   const [elements, setElements] = useState<DrawingElement[]>([]);
   const [color, setColor] = useState<any>('#333');
@@ -51,7 +62,13 @@ export default function DrawProvider({children}: {children: ReactElement}) {
   >();
 
   const commands = {
-    setMenu: (menu: ToobarMemu) => setMenu(menu),
+    setMenu,
+    setElements,
+    setColor,
+    setSize,
+    setPathType,
+    setBackgroundColor,
+    setSelectedElement,
   };
 
   return (
