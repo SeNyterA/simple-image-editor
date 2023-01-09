@@ -52,7 +52,6 @@ export default function DrawProvider({children}: {children: ReactElement}) {
 
   const commands = {
     setMenu: (menu: ToobarMemu) => setMenu(menu),
-    toggleModal: (visible: boolean) => {},
   };
 
   return (

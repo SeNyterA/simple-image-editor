@@ -18,48 +18,6 @@ export type DrawingElement = {
   | {type: 'image'; path: SkPath; image: SkImage}
 );
 
-export type Menu =
-  | 'drawing'
-  | 'chooseSticker'
-  | 'selection'
-  | 'colors'
-  | 'text'
-  | 'save'
-  | 'delete';
-export type Tool = 'draw' | 'selection' | 'sticker';
-
-export type ResizeMode = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
-
-export type UxState = {
-  menu: Menu | undefined;
-  modalVisible: boolean;
-};
-
-export type UxCommands = {
-  toggleMenu: (menu: Menu | undefined) => void;
-  toggleModal: (visible: boolean) => void;
-};
-
-export type UxContextType = {
-  state: UxState;
-  commands: UxCommands;
-  addListener: (listener: (state: UxState) => void) => () => void;
-};
-
-export type DrawingElements = DrawingElement[];
-
-export type DrawState = {
-  color: any;
-  size: number;
-  elements: DrawingElements;
-  selectedElements?: DrawingElements;
-  selectRectElement?: DrawingElement | undefined;
-  currentSelectionRect: SkRect | undefined;
-  resizeMode: ResizeMode | undefined;
-  backgroundColor: any;
-  pathType: PathType;
-};
-
 export type DrawCommands = {
   setColor: (color: any) => void;
   setBackgroundColor: (color: any) => void;
@@ -67,19 +25,6 @@ export type DrawCommands = {
   deleteSelectedElements: () => void;
   deleteAllElements: () => void;
   setPathType: (type: PathType) => void;
-  setSelectedElements: (...elements: DrawingElements) => void;
-  setSelectionRect: (selection: SkRect | undefined) => void;
-  setResizeMode: (resizeMode: ResizeMode | undefined) => void;
-  cleanUseless: () => Promise<void>;  setSize: (size: number) => void;
-
-};
-
-export type DrawContextType = {
-  state: DrawState;
-  commands: DrawCommands;
-  addListener: (listener: (state: DrawState) => void) => () => void;
-};
-
-export type TypeReactNode = {
-  children: React.ReactNode;
+  cleanUseless: () => Promise<void>;
+  setSize: (size: number) => void;
 };

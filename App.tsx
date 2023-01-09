@@ -1,120 +1,117 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React, {type PropsWithChildren} from 'react';
 import {
+  Canvas,
+  Fill,
+  Group,
+  Image,
+  rect,
+  rrect,
+  SkRect,
+  useImage,
+} from '@shopify/react-native-skia';
+import React, {useState} from 'react';
+import {
+  Dimensions,
   SafeAreaView,
-  ScrollView,
   StatusBar,
-  StyleSheet,
-  Text,
   useColorScheme,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+const {width, height} = Dimensions.get('window');
+
+const getRectImage = ({
+  imgW,
+  imgH,
+  canvasW,
+  canvasH,
+}: {
+  imgW?: number;
+  imgH?: number;
+  canvasW?: number;
+  canvasH?: number;
+}) => {
+  let rect: SkRect | undefined = undefined;
+  if (imgW && imgH && canvasW && canvasH) {
+    if (imgW / canvasW > imgH / canvasH) {
+      rect = {
+        width: canvasW - 10,
+        height: (canvasW - 10) * (imgH / imgW),
+        x: 0,
+        y: 0,
+      };
+    } else {
+      rect = {
+        width: (canvasH - 10) * (imgW / imgH),
+        height: canvasH - 10,
+        x: 0,
+        y: 0,
+      };
+    }
+  }
+  return rect;
 };
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
+  const [canvasSize, setCanvasSize] = useState({
+    width: width,
+    height: height - 50,
+  });
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const image = useImage(
+    'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg',
+  );
+
+  const imgRect = getRectImage({
+    canvasH: canvasSize.height,
+    canvasW: canvasSize.width,
+    imgH: image?.height(),
+    imgW: image?.width(),
+  });
+
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={[backgroundStyle, {flex: 1, backgroundColor: '#333'}]}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle="light-content"
+        // barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+      <View style={{height: 40, backgroundColor: '#333'}}></View>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onLayout={event => {
+          var {x, y, width, height} = event.nativeEvent.layout;
+          console.log(x, y, width, height);
+          setCanvasSize({
+            width,
+            height,
+          });
+        }}>
+        {!!imgRect && (
+          <Canvas
+            style={{
+              ...imgRect,
+            }}>
+            <Group
+              clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}>
+              {!!image && <Image image={image} fit="contain" {...imgRect} />}
+            </Group>
+          </Canvas>
+        )}
+      </View>
+
+      <View style={{height: 40, backgroundColor: '#333'}}></View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
