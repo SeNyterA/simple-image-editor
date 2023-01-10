@@ -4,7 +4,6 @@ import {useDrawContext} from '../contexts/DrawProvider';
 export default function useWatchDrawing(cb: any) {
   const drawContext = useDrawContext();
 
-
   const [state, setState] = useState<any>(cb(drawContext.state));
   useEffect(() => {
     const unsubscribeDraw = drawContext.addListener(stateTmp => {
@@ -15,6 +14,6 @@ export default function useWatchDrawing(cb: any) {
     return () => {
       unsubscribeDraw();
     };
-  }, [drawContext]);
+  }, [drawContext, cb]);
   return state;
 }
