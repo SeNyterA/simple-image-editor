@@ -1,31 +1,26 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useDrawContext} from './contexts/DrawProvider';
-import useTest from './hooks/useTest';
 
 export default function ToolBottom() {
-  const {
-    state: {color, size, menu},
-    commands,
-  } = useDrawContext();
-
-  const count = useTest();
+  const drawContext = useDrawContext();
+  const [size, setSize] = useState<number>(1);
 
   useEffect(() => {
-    console.log('Render', count);
-  }, [count]);
+    const unsubscribeDraw = drawContext?.addListener(state => {
+      setSize(state.size);
+    });
+    return () => {
+      unsubscribeDraw();
+    };
+  }, [drawContext]);
 
   return (
     <View style={{height: 60, padding: 10}}>
       <TouchableOpacity
         style={{width: 40, height: 40, backgroundColor: '#fff'}}
-        onPress={() => commands?.setSize(size + 1)}>
+        onPress={() => drawContext?.commands?.setSize(size + 1)}>
         <Text>{size}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{width: 40, height: 40, backgroundColor: '#fff'}}
-        onPress={() => commands?.setSize(size + 1)}>
-        <Text>{count}</Text>
       </TouchableOpacity>
     </View>
   );
