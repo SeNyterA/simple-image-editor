@@ -1,20 +1,26 @@
 import React from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
-    TextInput,
-    TouchableWithoutFeedback,
-    View,
-    ViewStyle
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle,
 } from 'react-native';
-import { useDrawContext } from './contexts/DrawProvider';
+import {
+  DrawboardState,
+  ToobarMemu,
+  useDrawContext,
+} from './contexts/DrawProvider';
+import useWatchDrawing from './hooks/useWatchDrawing';
 import ToolBottom from './ToolBottom';
 
 export default function TextEditor() {
-  const {
-    state: {menu},
-    commands,
-  } = useDrawContext();
+  const {commands} = useDrawContext();
+
+  const menu = useWatchDrawing(
+    (state: DrawboardState) => state.menu,
+  ) as ToobarMemu;
 
   const visible: ViewStyle =
     menu === 'addText'
