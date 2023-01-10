@@ -1,26 +1,26 @@
-import React from 'react';
+import React from 'react'
 import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
   TouchableWithoutFeedback,
   View,
-  ViewStyle,
-} from 'react-native';
+  ViewStyle
+} from 'react-native'
 import {
   DrawboardState,
   ToobarMemu,
-  useDrawContext,
-} from './contexts/DrawProvider';
-import useWatchDrawing from './hooks/useWatchDrawing';
-import ToolBottom from './ToolBottom';
+  useDrawContext
+} from './contexts/DrawProvider'
+import useWatchDrawing from './hooks/useWatchDrawing'
+import ToolBottom from './ToolBottom'
 
 export default function TextEditor() {
-  const {commands} = useDrawContext();
+  const { commands } = useDrawContext()
 
   const menu = useWatchDrawing(
-    (state: DrawboardState) => state.menu,
-  ) as ToobarMemu;
+    (state: DrawboardState) => state.menu
+  ) as ToobarMemu
 
   const visible: ViewStyle =
     menu === 'addText'
@@ -30,48 +30,49 @@ export default function TextEditor() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)'
         }
       : {
           width: 0,
-          height: 0,
-        };
+          height: 0
+        }
 
   return (
-    <View style={[visible, {justifyContent: 'center', alignItems: 'center'}]}>
+    <View style={[visible, { justifyContent: 'center', alignItems: 'center' }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{flex: 1, width: '100%'}}>
-        <TouchableWithoutFeedback onPress={() => commands?.setMenu('text')}>
+        style={{ flex: 1, width: '100%' }}
+      >
+        <TouchableWithoutFeedback onPress={() => commands?.setMenu('drawing')}>
           <View
             style={{
-              flex: 1,
-            }}>
+              flex: 1
+            }}
+          >
             <View
               style={{
                 flex: 1,
                 justifyContent: 'center',
-                alignContent: 'center',
+                alignContent: 'center'
               }}
               onLayout={event => {
-                var {x, y, width, height} = event.nativeEvent.layout;
-                // console.log(x, y, width, height);
-              }}>
+                var { x, y, width, height } = event.nativeEvent.layout
+              }}
+            >
               {menu === 'addText' && (
                 <TextInput
                   multiline
                   autoFocus
-                  defaultValue="Text"
+                  defaultValue='Text'
                   style={{
                     fontSize: 24,
                     fontWeight: '600',
                     color: '#fff',
                     textAlignVertical: 'center',
-                    textAlign: 'center',
+                    textAlign: 'center'
                   }}
                   onLayout={event => {
-                    var {x, y, width, height} = event.nativeEvent.layout;
-                    // console.log(x, y, width, height);
+                    // var {x, y, width, height} = event.nativeEvent.layout;
                   }}
                 />
               )}
@@ -82,5 +83,5 @@ export default function TextEditor() {
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </View>
-  );
+  )
 }
