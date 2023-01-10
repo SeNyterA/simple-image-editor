@@ -32,7 +32,9 @@ export type DrawboardCommands = {
   setBackgroundColor: (backgroundColor?: any) => void;
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void;
   getElement: (index: number) => DrawingElement | undefined;
+  getElements: () => DrawingElement[];
   addElement: (e: DrawingElement) => void;
+  getAllState: () => DrawboardState;
 };
 
 export type DrawboardContextType = {
@@ -63,6 +65,16 @@ export default function DrawProvider({children}: {children: ReactElement[]}) {
     DrawingElement | undefined
   >();
 
+  const state = {
+    menu,
+    elements,
+    selectedElement,
+    color,
+    size,
+    pathType,
+    backgroundColor,
+  };
+
   const commands = {
     setMenu,
     setElements,
@@ -74,21 +86,15 @@ export default function DrawProvider({children}: {children: ReactElement[]}) {
     getElement: (index: number) => elements[index] || undefined,
     addElement: (e: DrawingElement) =>
       setElements(elements => [...elements, e]),
+    getElements: () => elements,
+    getAllState: () => state,
   };
 
   return (
     <DrawContext.Provider
       value={{
         commands,
-        state: {
-          menu,
-          elements,
-          selectedElement,
-          color,
-          size,
-          pathType,
-          backgroundColor,
-        },
+        state,
       }}>
       {children}
     </DrawContext.Provider>

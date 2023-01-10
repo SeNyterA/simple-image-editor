@@ -1,9 +1,4 @@
-import {
-  Skia,
-  SkPoint,
-  TouchInfo,
-  useTouchHandler,
-} from '@shopify/react-native-skia';
+import {Skia, SkPoint, useTouchHandler} from '@shopify/react-native-skia';
 import {useRef} from 'react';
 import {DrawingElement, PathType} from '../contexts/type';
 import {useDrawContext} from './../contexts/DrawProvider';
@@ -30,7 +25,7 @@ export const useTouchDrawing = () => {
   const prevPointRef = useRef<SkPoint>();
 
   const {
-    state: {menu, color, size, pathType, elements},
+    state: {menu, color, size, pathType},
     commands,
   } = useDrawContext();
 
@@ -56,8 +51,10 @@ export const useTouchDrawing = () => {
         case 'drawing':
         case 'chooseSticker':
         case 'colors': {
-          console.log('elements', elements.length);
-          const element = commands?.getElement(elements.length - 1);
+          const elements = commands?.getElements() || [];
+          const element = elements[elements.length - 1];
+
+          console.log(elements.length);
           const xMid = (prevPointRef.current!.x + x) / 2;
           const yMid = (prevPointRef.current!.y + y) / 2;
           element?.path.quadTo(
