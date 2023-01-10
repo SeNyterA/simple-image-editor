@@ -24,10 +24,7 @@ export const createPath = (
 export const useTouchDrawing = () => {
   const prevPointRef = useRef<SkPoint>();
 
-  const {
-    state: {menu, color, size, pathType},
-    commands,
-  } = useDrawContext();
+  const {commands, state, addListener} = useDrawContext();
 
   return useTouchHandler({
     onStart: ({x, y}) => {

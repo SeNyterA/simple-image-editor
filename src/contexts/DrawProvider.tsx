@@ -1,4 +1,4 @@
-import React, {createContext, ReactElement, useContext, useState} from 'react';
+import React, {createContext, ReactElement, useContext} from 'react';
 
 import {DrawingElement, PathType} from './type';
 
@@ -31,63 +31,59 @@ export type DrawboardCommands = {
   setPathType: (pathType: PathType) => void;
   setBackgroundColor: (backgroundColor?: any) => void;
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void;
-  getElement: (index: number) => DrawingElement | undefined;
-  getElements: () => DrawingElement[];
-  addElement: (e: DrawingElement) => void;
-  getAllState: () => DrawboardState;
 };
 
 export type DrawboardContextType = {
-  commands?: DrawboardCommands;
+  commands: DrawboardCommands;
   state: DrawboardState;
+  addListener: (listener: (state: DrawboardState) => void) => () => void;
 };
 
-const DrawContext = createContext<DrawboardContextType>({
-  state: {
+const DrawContext = createContext<DrawboardContextType | undefined>(undefined);
+
+export default function DrawProvider({children}: {children: ReactElement[]}) {
+  const state: DrawboardState = {
     menu: 'drawing',
     elements: [],
     selectedElement: undefined,
-    color: '#333',
-    size: 2,
     pathType: 'normal',
-    backgroundColor: '#fff',
-  },
-});
-
-export default function DrawProvider({children}: {children: ReactElement[]}) {
-  const [menu, setMenu] = useState<ToobarMemu>('drawing');
-  const [elements, setElements] = useState<DrawingElement[]>([]);
-  const [color, setColor] = useState<any>('#ffffff');
-  const [size, setSize] = useState<number>(6);
-  const [pathType, setPathType] = useState<PathType>('normal');
-  const [backgroundColor, setBackgroundColor] = useState<any>('#333');
-  const [selectedElement, setSelectedElement] = useState<
-    DrawingElement | undefined
-  >();
-
-  const state = {
-    menu,
-    elements,
-    selectedElement,
-    color,
-    size,
-    pathType,
-    backgroundColor,
+    size: 6,
+    color: '#fff',
+    backgroundColor: '#000',
   };
 
+  const listeners = [] as ((state: DrawboardState) => void)[];
+  const notifyListeners = (s: DrawboardState) => listeners.forEach(l => l(s));
+
   const commands = {
-    setMenu,
-    setElements,
-    setColor,
-    setSize,
-    setPathType,
-    setBackgroundColor,
-    setSelectedElement,
-    getElement: (index: number) => elements[index] || undefined,
-    addElement: (e: DrawingElement) =>
-      setElements(elements => [...elements, e]),
-    getElements: () => elements,
-    getAllState: () => state,
+    setMenu: (menu: ToobarMemu) => {
+      state.menu = menu;
+      notifyListeners(state);
+    },
+    setElements: (elements: DrawingElement[]) => {
+      state.elements = elements;
+      notifyListeners(state);
+    },
+    setColor: (color: any) => {
+      state.color = color;
+      notifyListeners(state);
+    },
+    setSize: (size: number) => {
+      state.size = size;
+      notifyListeners(state);
+    },
+    setPathType: (pathType: PathType) => {
+      state.pathType = pathType;
+      notifyListeners(state);
+    },
+    setBackgroundColor: (color: any) => {
+      state.backgroundColor = color;
+      notifyListeners(state);
+    },
+    setSelectedElement: (element?: DrawingElement | undefined) => {
+      state.selectedElement = element;
+      notifyListeners(state);
+    },
   };
 
   return (
@@ -95,10 +91,20 @@ export default function DrawProvider({children}: {children: ReactElement[]}) {
       value={{
         commands,
         state,
+        addListener: (cb: (state: DrawboardState) => void) => {
+          listeners.push(cb);
+          return () => listeners.splice(listeners.indexOf(cb), 1);
+        },
       }}>
       {children}
     </DrawContext.Provider>
   );
 }
 
-export const useDrawContext = () => useContext(DrawContext);
+export const useDrawContext = () => {
+  const drawContext = useContext(DrawContext);
+  if (drawContext === null) {
+    throw Error('Ux Context missing');
+  }
+  return drawContext!;
+};

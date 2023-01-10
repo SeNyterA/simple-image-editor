@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {useDrawContext} from './contexts/DrawProvider';
+import {DrawboardState, useDrawContext} from './contexts/DrawProvider';
+import DrawingBoard from './DrawingBoard';
+import useWatchDrawing from './hooks/useWatchDrawing';
 
 export default function ToolHeader() {
-  const {
-    state: {menu},
-    commands,
-  } = useDrawContext();
+  const {addListener, commands} = useDrawContext();
+
+  const size = useWatchDrawing((state: DrawboardState) => state.size);
+
+  console.log('ssssssss', size);
 
   return (
     <View
