@@ -7,12 +7,12 @@ import {
   Path,
   rect,
   rrect,
+  SkiaDomView,
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
-import { useDrawContext } from './contexts/DrawProvider'
 import { DrawingElement } from './contexts/type'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
@@ -50,7 +50,11 @@ const getRectImage = ({
   return rect
 }
 
-export default function DrawingBoard() {
+export default function DrawingBoard({
+  innerRef
+}: {
+  innerRef: React.RefObject<SkiaDomView>
+}) {
   const [canvasSize, setCanvasSize] = useState({
     width: width,
     height: height - 50
@@ -60,61 +64,62 @@ export default function DrawingBoard() {
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
-  const drawContext = useDrawContext()
-  console.log(drawContext.state.elements.length)
 
-  const elementComponents = useMemo(() => {
-    return elements.map((element: DrawingElement, index) => {
-      switch (element.type) {
-        case 'path':
-          switch (element.pathType) {
-            case 'discreted':
-              return (
-                <Group key={index}>
+  const elementComponents = useMemo(
+    () =>
+      elements.map((element: DrawingElement, index) => {
+        switch (element.type) {
+          case 'path':
+            switch (element.pathType) {
+              case 'discreted':
+                return (
+                  <Group key={index}>
+                    <Path
+                      path={element.path}
+                      color={element.color}
+                      style='stroke'
+                      strokeWidth={element.size}
+                      strokeCap='round'
+                    >
+                      <DiscretePathEffect length={3} deviation={5} />
+                    </Path>
+                  </Group>
+                )
+              case 'dashed':
+                return (
+                  <Group key={index}>
+                    <Path
+                      path={element.path}
+                      color={element.color}
+                      style='stroke'
+                      strokeWidth={element.size}
+                      strokeCap='round'
+                    >
+                      <DashPathEffect
+                        intervals={[element.size * 2, element.size * 2]}
+                      />
+                    </Path>
+                  </Group>
+                )
+              default:
+                return (
                   <Path
+                    key={index}
                     path={element.path}
                     color={element.color}
                     style='stroke'
                     strokeWidth={element.size}
                     strokeCap='round'
-                  >
-                    <DiscretePathEffect length={3} deviation={5} />
-                  </Path>
-                </Group>
-              )
-            case 'dashed':
-              return (
-                <Group key={index}>
-                  <Path
-                    path={element.path}
-                    color={element.color}
-                    style='stroke'
-                    strokeWidth={element.size}
-                    strokeCap='round'
-                  >
-                    <DashPathEffect
-                      intervals={[element.size * 2, element.size * 2]}
-                    />
-                  </Path>
-                </Group>
-              )
-            default:
-              return (
-                <Path
-                  key={index}
-                  path={element.path}
-                  color={element.color}
-                  style='stroke'
-                  strokeWidth={element.size}
-                  strokeCap='round'
-                />
-              )
-          }
+                  />
+                )
+            }
 
-        default:
-      }
-    })
-  }, [elements])
+          default:
+        }
+      }),
+
+    [elements]
+  )
 
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
@@ -143,6 +148,7 @@ export default function DrawingBoard() {
           style={{
             ...imgRect
           }}
+          ref={innerRef}
         >
           <Group
             clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}

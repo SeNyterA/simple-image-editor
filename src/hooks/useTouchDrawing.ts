@@ -22,14 +22,13 @@ export const createPath = (
 }
 
 export const useTouchDrawing = () => {
-  const prevPointRef = useRef<SkPoint | undefined>()
+  const prevPointRef = useRef<SkPoint>()
   const stateRef = useRef<'create' | 'drawing'>('create')
 
   const drawContext = useDrawContext()
 
   return useTouchHandler({
     onStart: ({ x, y }) => {
-      console.log(x, y)
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
@@ -46,8 +45,6 @@ export const useTouchDrawing = () => {
       prevPointRef.current = { x, y }
     },
     onActive: ({ x, y }) => {
-      console.log(drawContext.state.menu)
-      console.log(drawContext.state.elements.length)
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
@@ -60,6 +57,7 @@ export const useTouchDrawing = () => {
               size,
               pathType
             )
+
             const xMid = (prevPointRef.current!.x + x) / 2
             const yMid = (prevPointRef.current!.y + y) / 2
             element.path.quadTo(
@@ -94,7 +92,6 @@ export const useTouchDrawing = () => {
         default:
           break
       }
-      prevPointRef.current = undefined
     }
   })
 }
