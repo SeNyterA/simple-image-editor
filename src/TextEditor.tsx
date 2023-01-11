@@ -74,7 +74,9 @@ export default function TextEditor() {
                     fontWeight: '600',
                     color: '#fff',
                     textAlignVertical: 'center',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    backgroundColor:'red'
+
                   }}
                   onLayout={event => {
                     var { x, y, width, height } = event.nativeEvent.layout

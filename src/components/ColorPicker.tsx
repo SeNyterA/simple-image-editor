@@ -9,13 +9,38 @@ const colors = [
   '#FF0',
   '#ffa200',
   '#fe5f9f',
+  '#ff0000',
+
+  '#FFF',
+  '#000',
+  '#0FFA',
+  '#0F0A',
+  '#FF0',
+  '#ffa200',
+  '#fe5f9f',
+  '#ff0000',
+
+  '#FFF',
+  '#000',
+  '#0FFA',
+  '#0F0A',
+  '#FF0',
+  '#ffa200',
+  '#fe5f9f',
   '#ff0000'
 ]
 
 export default function ColorPicker() {
   return (
-    <View style={{ flexDirection: 'row' }}>
-      <ScrollView horizontal>
+    <View style={{ flexDirection: 'row', flex: 1 }}>
+      <ScrollView
+        horizontal
+        contentContainerStyle={{
+          //   justifyContent: 'center',
+          alignItems: 'center'
+        }}
+        style={{ height: 50 }}
+      >
         {colors.map((color, index) => (
           <TouchableOpacity
             key={index}

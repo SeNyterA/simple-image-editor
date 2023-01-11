@@ -8,9 +8,8 @@ export default function TextTool() {
     <View
       style={{
         height: 60,
-        padding: 10,
-        flexDirection: 'row',
-        backgroundColor: 'red'
+        alignItems: 'center',
+        flexDirection: 'row'
       }}
       onLayout={event => {
         var { x, y, width, height } = event.nativeEvent.layout
