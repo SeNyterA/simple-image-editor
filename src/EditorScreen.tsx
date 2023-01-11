@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { useCanvasRef, useImage } from '@shopify/react-native-skia'
+import { useCanvasRef } from '@shopify/react-native-skia'
 import React, { useMemo, useState } from 'react'
 import { SafeAreaView, StatusBar, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'

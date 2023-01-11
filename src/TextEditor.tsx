@@ -8,6 +8,7 @@ import {
   ViewStyle
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import TextTool from './components/TextTool'
 import {
   DrawboardState,
   ToobarMemu,
@@ -67,7 +68,7 @@ export default function TextEditor() {
                 <TextInput
                   multiline
                   autoFocus
-                  defaultValue='Text'
+                  defaultValue=''
                   style={{
                     fontSize: 24,
                     fontWeight: '600',
@@ -76,12 +77,13 @@ export default function TextEditor() {
                     textAlign: 'center'
                   }}
                   onLayout={event => {
-                    // var {x, y, width, height} = event.nativeEvent.layout;
+                    var { x, y, width, height } = event.nativeEvent.layout
                   }}
                 />
               )}
             </View>
-            <ToolBottom />
+            {/* <ToolBottom /> */}
+            <TextTool />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

@@ -60,6 +60,7 @@ export default function DrawingBoard({
     height: height - 50
   })
   const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
+
   const touchHandler = useTouchDrawing()
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
