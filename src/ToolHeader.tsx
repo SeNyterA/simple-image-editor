@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { useDrawContext } from './contexts/DrawProvider'
 
-export default function ToolHeader() {
+export default function ToolHeader({ setCount }) {
   const { commands } = useDrawContext()
 
   return (
@@ -26,7 +26,7 @@ export default function ToolHeader() {
           addText
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => setCount?.(Math.random())}>
         <Text
           style={{
             color: '#fff',

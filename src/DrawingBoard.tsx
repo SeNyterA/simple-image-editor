@@ -12,6 +12,7 @@ import {
 } from '@shopify/react-native-skia'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
+import { useDrawContext } from './contexts/DrawProvider'
 import { DrawingElement } from './contexts/type'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
@@ -54,11 +55,13 @@ export default function DrawingBoard() {
     width: width,
     height: height - 50
   })
-  const elements = useWatchDrawing(s => s.elements)
+  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
   const touchHandler = useTouchDrawing()
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
+  const drawContext = useDrawContext()
+  console.log(drawContext.state.elements.length)
 
   const elementComponents = useMemo(() => {
     return elements.map((element: DrawingElement, index) => {

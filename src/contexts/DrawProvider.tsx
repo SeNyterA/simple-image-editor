@@ -1,4 +1,4 @@
-import React, { createContext, ReactElement, useContext } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 
 import { DrawingElement, PathType } from './type'
 
@@ -42,11 +42,7 @@ export type DrawboardContextType = {
 
 const DrawContext = createContext<DrawboardContextType | undefined>(undefined)
 
-export default function DrawProvider({
-  children
-}: {
-  children: ReactElement[]
-}) {
+const createDrawProviderValue = (): DrawboardContextType => {
   const state: DrawboardState = {
     menu: 'drawing',
     elements: [],
@@ -95,20 +91,14 @@ export default function DrawProvider({
     }
   }
 
-  return (
-    <DrawContext.Provider
-      value={{
-        commands,
-        state,
-        addListener: (cb: (state: DrawboardState) => void) => {
-          listeners.push(cb)
-          return () => listeners.splice(listeners.indexOf(cb), 1)
-        }
-      }}
-    >
-      {children}
-    </DrawContext.Provider>
-  )
+  return {
+    commands,
+    state,
+    addListener: (cb: (state: DrawboardState) => void) => {
+      listeners.push(cb)
+      return () => listeners.splice(listeners.indexOf(cb), 1)
+    }
+  }
 }
 
 export const useDrawContext = () => {
@@ -117,4 +107,11 @@ export const useDrawContext = () => {
     throw Error('Ux Context missing')
   }
   return drawContext!
+}
+
+export const useDrawProvider = () => {
+  const drawContext = useMemo(() => createDrawProviderValue(), [])
+  return ({ children }: { children: React.ReactNode }) => (
+    <DrawContext.Provider value={drawContext}>{children}</DrawContext.Provider>
+  )
 }

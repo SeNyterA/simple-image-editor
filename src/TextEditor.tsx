@@ -7,6 +7,7 @@ import {
   View,
   ViewStyle
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   DrawboardState,
   ToobarMemu,
@@ -17,7 +18,7 @@ import ToolBottom from './ToolBottom'
 
 export default function TextEditor() {
   const { commands } = useDrawContext()
-
+  const insets = useSafeAreaInsets()
   const menu = useWatchDrawing(
     (state: DrawboardState) => state.menu
   ) as ToobarMemu
@@ -33,8 +34,11 @@ export default function TextEditor() {
           backgroundColor: 'rgba(0, 0, 0, 0.7)'
         }
       : {
-          width: 0,
-          height: 0
+          left: 0,
+          right: 0,
+          bottom: 0,
+          position: 'absolute',
+          paddingBottom: insets.bottom
         }
 
   return (
@@ -77,8 +81,7 @@ export default function TextEditor() {
                 />
               )}
             </View>
-
-            {menu === 'addText' && <ToolBottom />}
+            <ToolBottom />
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
