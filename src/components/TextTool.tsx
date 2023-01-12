@@ -13,7 +13,6 @@ export default function TextTool() {
       }}
       onLayout={event => {
         var { x, y, width, height } = event.nativeEvent.layout
-        console.log(height)
       }}
     >
       <PathTypePicker />

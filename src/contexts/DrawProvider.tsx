@@ -32,6 +32,7 @@ export type DrawboardCommands = {
   setBackgroundColor: (backgroundColor?: any) => void
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void
   addElement: (element: DrawingElement) => void
+  removeElement: (index: number) => void
 }
 
 export type DrawboardContextType = {
@@ -56,7 +57,7 @@ const createDrawProviderValue = (): DrawboardContextType => {
   const listeners = [] as ((state: DrawboardState) => void)[]
   const notifyListeners = (s: DrawboardState) => listeners.forEach(l => l(s))
 
-  const commands = {
+  const commands: DrawboardCommands = {
     setMenu: (menu: ToobarMemu) => {
       state.menu = menu
       notifyListeners(state)
@@ -87,6 +88,10 @@ const createDrawProviderValue = (): DrawboardContextType => {
     },
     setSelectedElement: (element?: DrawingElement | undefined) => {
       state.selectedElement = element
+      notifyListeners(state)
+    },
+    removeElement: index => {
+      state.elements.pop()
       notifyListeners(state)
     }
   }

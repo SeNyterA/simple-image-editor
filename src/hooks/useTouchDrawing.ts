@@ -27,15 +27,17 @@ export const useTouchDrawing = () => {
 
   const drawContext = useDrawContext()
 
+  console.log(drawContext.state.elements.length)
+
   return useTouchHandler({
     onStart: ({ x, y }) => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          // const { color, size, pathType } = drawContext.state
-          // drawContext.commands.addElement(
-          //   createPath(x, y, color, size, pathType)
-          // )
+          const { color, size, pathType } = drawContext.state
+          drawContext.commands.addElement(
+            createPath(x, y, color, size, pathType)
+          )
           stateRef.current = 'create'
           break
         }
@@ -48,27 +50,7 @@ export const useTouchDrawing = () => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          if (stateRef.current === 'create') {
-            const { color, size, pathType } = drawContext.state
-            const element = createPath(
-              prevPointRef.current!.x,
-              prevPointRef.current!.y,
-              color,
-              size,
-              pathType
-            )
-
-            const xMid = (prevPointRef.current!.x + x) / 2
-            const yMid = (prevPointRef.current!.y + y) / 2
-            element.path.quadTo(
-              prevPointRef.current!.x,
-              prevPointRef.current!.y,
-              xMid,
-              yMid
-            )
-            drawContext.commands.addElement(element)
-            stateRef.current = 'drawing'
-          } else if (drawContext.state.elements.length) {
+          if (drawContext.state.elements.length) {
             const element =
               drawContext.state.elements[drawContext.state.elements.length - 1]
             const xMid = (prevPointRef.current!.x + x) / 2
@@ -79,6 +61,7 @@ export const useTouchDrawing = () => {
               xMid,
               yMid
             )
+            stateRef.current = 'drawing'
           }
           break
         }
@@ -89,6 +72,13 @@ export const useTouchDrawing = () => {
     },
     onEnd: () => {
       switch (drawContext.state.menu) {
+        case undefined:
+        case 'drawing': {
+          if (stateRef.current === 'create')
+            drawContext.commands.removeElement(0)
+
+          break
+        }
         default:
           break
       }
