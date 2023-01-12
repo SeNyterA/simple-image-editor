@@ -14,6 +14,7 @@ import {
   ToobarMemu,
   useDrawContext
 } from './contexts/DrawProvider'
+import { useKeyboard } from './hooks/useKeyboardHeight'
 import useWatchDrawing from './hooks/useWatchDrawing'
 import ToolBottom from './ToolBottom'
 
@@ -32,7 +33,8 @@ export default function TextEditor() {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)'
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          paddingBottom: insets.bottom
         }
       : {
           left: 0,
@@ -46,7 +48,7 @@ export default function TextEditor() {
     <View style={[visible, { justifyContent: 'center', alignItems: 'center' }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1, width: '100%' }}
+        style={{ flex: 1, width: '100%', position: 'relative' }}
       >
         <TouchableWithoutFeedback onPress={() => commands?.setMenu('drawing')}>
           <View
@@ -75,8 +77,7 @@ export default function TextEditor() {
                     color: '#fff',
                     textAlignVertical: 'center',
                     textAlign: 'center',
-                    backgroundColor:'red'
-
+                    marginHorizontal: 20
                   }}
                   onLayout={event => {
                     var { x, y, width, height } = event.nativeEvent.layout

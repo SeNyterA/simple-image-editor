@@ -49,7 +49,7 @@ const createDrawProviderValue = (): DrawboardContextType => {
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',
-    size: 6,
+    size: 4,
     color: '#fff',
     backgroundColor: '#000'
   }

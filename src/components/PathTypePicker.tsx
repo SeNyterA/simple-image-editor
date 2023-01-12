@@ -6,30 +6,52 @@ import {
   View
 } from 'react-native'
 import { BrushDashedIcon, BrushStrokeIcon } from '../assets'
+import { useDrawContext } from '../contexts/DrawProvider'
+import { PathType } from '../contexts/type'
+import useWatchDrawing from '../hooks/useWatchDrawing'
 
 export default function PathTypePicker() {
+  const pathType = useWatchDrawing(state => state.pathType) as PathType
+  const {
+    commands: { setPathType }
+  } = useDrawContext()
   return (
-    <View style={{ flexDirection: 'row' }}>
-      <TouchableOpacity>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <TouchableOpacity
+        style={[styles.icon, pathType === 'normal' && styles.active]}
+        onPress={() => setPathType('normal')}
+      >
         <BrushStrokeIcon fill='#FFF' height={28} width={28} />
       </TouchableOpacity>
-      <TouchableOpacity>
+      <View style={{ margin: 3 }} />
+      <TouchableOpacity
+        style={[styles.icon, pathType === 'dashed' && styles.active]}
+        onPress={() => setPathType('dashed')}
+      >
         <BrushDashedIcon fill='#FFF' height={28} width={28} />
       </TouchableOpacity>
+      <View style={styles.line} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 50
+  icon: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#333',
+    borderRadius: 100
   },
-  bigBlue: {
-    color: 'blue',
-    fontWeight: 'bold',
-    fontSize: 30
+  active: {
+    borderWidth: 2,
+    borderColor: '#aaa'
   },
-  red: {
-    color: 'red'
+  line: {
+    height: 30,
+    marginHorizontal: 10,
+    width: 1,
+    backgroundColor: '#fff'
   }
 })

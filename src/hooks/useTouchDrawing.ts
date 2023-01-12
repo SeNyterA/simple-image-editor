@@ -27,8 +27,6 @@ export const useTouchDrawing = () => {
 
   const drawContext = useDrawContext()
 
-  console.log(drawContext.state.elements.length)
-
   return useTouchHandler({
     onStart: ({ x, y }) => {
       switch (drawContext.state.menu) {
