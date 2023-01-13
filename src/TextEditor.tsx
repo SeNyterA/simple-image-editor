@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
   Platform,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -14,9 +15,7 @@ import {
   ToobarMemu,
   useDrawContext
 } from './contexts/DrawProvider'
-import { useKeyboard } from './hooks/useKeyboardHeight'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import ToolBottom from './ToolBottom'
 
 export default function TextEditor() {
   const { commands } = useDrawContext()
@@ -24,6 +23,10 @@ export default function TextEditor() {
   const menu = useWatchDrawing(
     (state: DrawboardState) => state.menu
   ) as ToobarMemu
+
+  const color = useWatchDrawing((state: DrawboardState) => state.color)
+
+  const [value, setValue] = useState('text')
 
   const visible: ViewStyle =
     menu === 'addText'
@@ -71,21 +74,35 @@ export default function TextEditor() {
                   multiline
                   autoFocus
                   defaultValue=''
+                  onChangeText={t => setValue(t)}
                   style={{
                     fontSize: 24,
                     fontWeight: '600',
                     color: '#fff',
-                    textAlignVertical: 'center',
+                    // textAlignVertical: 'center',
                     textAlign: 'center',
-                    marginHorizontal: 20
+                    marginHorizontal: 20,
+                    // backgroundColor: color,
+                    borderRadius: 10
                   }}
                   onLayout={event => {
                     var { x, y, width, height } = event.nativeEvent.layout
                   }}
-                />
+                >
+                  <Text
+                    style={{
+                      backgroundColor: color
+                    }}
+                    onLayout={event => {
+                      var { x, y, width, height } = event.nativeEvent.layout
+                      console.log(x, y, width, height)
+                    }}
+                  >
+                    {value}
+                  </Text>
+                </TextInput>
               )}
             </View>
-            {/* <ToolBottom /> */}
             <TextTool />
           </View>
         </TouchableWithoutFeedback>
