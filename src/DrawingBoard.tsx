@@ -9,13 +9,16 @@ import {
   rrect,
   SkiaDomView,
   SkRect,
-  useImage
+  useImage,
+  useValue
 } from '@shopify/react-native-skia'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import { DrawingElement } from './contexts/type'
+import { GestureHandler } from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
+import { LocationSticker } from './LocationSticker'
 
 const { width, height } = Dimensions.get('window')
 const getRectImage = ({
@@ -60,6 +63,8 @@ export default function DrawingBoard({
     height: height - 50
   })
   const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
+
+  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
 
   const touchHandler = useTouchDrawing()
   const image = useImage(
@@ -156,9 +161,32 @@ export default function DrawingBoard({
           >
             {!!image && <Image image={image} fit='contain' {...imgRect} />}
             {elementComponents}
+            {textElements.map(
+              (e, index) =>
+                e.type === 'text' && (
+                  <LocationSticker
+                    key={index}
+                    text={e.text}
+                    font={e.font}
+                    matrix={e.matrix}
+                    rectDimensions={e.dimensions}
+                  />
+                )
+            )}
           </Group>
         </Canvas>
       )}
+
+      {/* {textElements.map(
+        e =>
+          e.type === 'text' && (
+            <GestureHandler
+              dimensions={e.dimensions}
+              matrix={useValue(e.matrix)}
+              debug={true}
+            />
+          )
+      )} */}
     </View>
   )
 }

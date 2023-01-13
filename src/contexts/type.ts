@@ -1,12 +1,18 @@
-import { SkImage, SkPath } from '@shopify/react-native-skia'
+import {
+  SkFont,
+  SkiaMutableValue,
+  SkImage,
+  SkMatrix,
+  SkPath,
+  SkRect
+} from '@shopify/react-native-skia'
 
-export type DrawingElementType = 'path' | 'image'
+export type DrawingElementType = 'path' | 'image' | 'text'
 
 export type PathType = 'normal' | 'dashed' | 'discreted'
 
 export type DrawingElement = {
   type: DrawingElementType
-  path: SkPath
 } & (
   | {
       type: 'path'
@@ -16,6 +22,13 @@ export type DrawingElement = {
       size: number
     }
   | { type: 'image'; path: SkPath; image: SkImage }
+  | {
+      type: 'text'
+      dimensions: SkRect
+      matrix: SkMatrix
+      text: string
+      font: SkFont
+    }
 )
 
 export type DrawCommands = {

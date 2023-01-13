@@ -1,3 +1,4 @@
+import { rect, Skia, useFont, useValue } from '@shopify/react-native-skia'
 import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -8,13 +9,16 @@ import {
   View,
   ViewStyle
 } from 'react-native'
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { RobotoMedium } from './assets/fonts'
 import TextTool from './components/TextTool'
 import {
   DrawboardState,
   ToobarMemu,
   useDrawContext
 } from './contexts/DrawProvider'
+import { DrawingElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function TextEditor() {
@@ -27,6 +31,9 @@ export default function TextEditor() {
   const color = useWatchDrawing((state: DrawboardState) => state.color)
 
   const [value, setValue] = useState('text')
+
+  // const locationMatrix = useValue(Skia.Matrix())
+  const font = useFont(RobotoMedium, 24)
 
   const visible: ViewStyle =
     menu === 'addText'
@@ -53,7 +60,27 @@ export default function TextEditor() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1, width: '100%', position: 'relative' }}
       >
-        <TouchableWithoutFeedback onPress={() => commands?.setMenu('drawing')}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            if (!!font) {
+              const aa = Skia.Path.MakeFromText(value, 0, 0, font)
+              const dime = rect(10, 10, (aa?.getBounds().width || 200) + 16, 40)
+
+              console.log(Skia.Matrix())
+
+              const e: DrawingElement = {
+                type: 'text',
+                dimensions: dime,
+                matrix: Skia.Matrix(),
+                font: font,
+                text: value
+              }
+              commands.addTextElement(e)
+              console.log('hahas')
+            }
+            commands?.setMenu('drawing')
+          }}
+        >
           <View
             style={{
               flex: 1
@@ -74,7 +101,11 @@ export default function TextEditor() {
                   multiline
                   autoFocus
                   defaultValue=''
-                  onChangeText={t => setValue(t)}
+                  onChangeText={t => {
+                    setValue(t)
+
+                    // console.log('RobotoMedium', RobotoMedium)
+                  }}
                   style={{
                     fontSize: 24,
                     fontWeight: '600',
@@ -85,6 +116,7 @@ export default function TextEditor() {
                     // backgroundColor: color,
                     borderRadius: 10
                   }}
+                  onBlur={() => {}}
                   onLayout={event => {
                     var { x, y, width, height } = event.nativeEvent.layout
                   }}

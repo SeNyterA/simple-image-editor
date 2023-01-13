@@ -16,6 +16,7 @@ export type ToobarMemu =
 export type DrawboardState = {
   menu: ToobarMemu
   elements: DrawingElement[]
+  textElements: DrawingElement[]
   selectedElement: DrawingElement | undefined
   color: any
   size: number
@@ -33,6 +34,7 @@ export type DrawboardCommands = {
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void
   addElement: (element: DrawingElement) => void
   removeElement: (index: number) => void
+  addTextElement: (elements: DrawingElement) => void
 }
 
 export type DrawboardContextType = {
@@ -51,7 +53,9 @@ const createDrawProviderValue = (): DrawboardContextType => {
     pathType: 'normal',
     size: 4,
     color: '#fff',
-    backgroundColor: '#000'
+    backgroundColor: '#000',
+
+    textElements: []
   }
 
   const listeners = [] as ((state: DrawboardState) => void)[]
@@ -92,6 +96,11 @@ const createDrawProviderValue = (): DrawboardContextType => {
     },
     removeElement: index => {
       state.elements.pop()
+      notifyListeners(state)
+    },
+    addTextElement: (element: DrawingElement) => {
+      console.log('sssssdasdasdsadas')
+      state.textElements = [...state.textElements, element]
       notifyListeners(state)
     }
   }
