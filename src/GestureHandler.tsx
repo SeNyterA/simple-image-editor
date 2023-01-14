@@ -165,6 +165,7 @@ export const GestureHandler = ({
     <GestureDetector gesture={composed}>
       <Animated.View style={style}>
         <TextInput
+          editable={false}
           style={{
             backgroundColor: '#fff',
             fontSize: 24,

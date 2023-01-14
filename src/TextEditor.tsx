@@ -1,9 +1,8 @@
-import { rect, Skia, useFont, useValue } from '@shopify/react-native-skia'
+import { rect, size, Skia, useFont } from '@shopify/react-native-skia'
 import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
   Platform,
-  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -14,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RobotoMedium } from './assets/fonts'
 import TextTool from './components/TextTool'
 import {
+  CanvasSizeType,
   DrawboardState,
   ToobarMemu,
   useDrawContext
@@ -29,6 +29,9 @@ export default function TextEditor() {
   ) as ToobarMemu
 
   const color = useWatchDrawing((state: DrawboardState) => state.color)
+  const canvasSize = useWatchDrawing(s => s.canvasSize) as CanvasSizeType
+
+  console.log(canvasSize)
 
   const [value, setValue] = useState('text')
 
@@ -64,9 +67,15 @@ export default function TextEditor() {
           onPress={() => {
             if (!!font) {
               const aa = Skia.Path.MakeFromText(value, 0, 0, font)
-              const dime = rect(10, 10, (aa?.getBounds().width || 200) + 16, 40)
 
-              console.log(Skia.Matrix())
+              const width = (aa?.getBounds().width || 200) + 16
+
+              const dime = rect(
+                (canvasSize.width - width) / 2,
+                (canvasSize.height - 40) / 2,
+                width,
+                40
+              )
 
               const e: DrawingElement = {
                 type: 'text',
@@ -76,7 +85,6 @@ export default function TextEditor() {
                 text: value
               }
               commands.addTextElement(e)
-              console.log('hahas')
             }
             commands?.setMenu('drawing')
           }}
@@ -97,32 +105,48 @@ export default function TextEditor() {
               }}
             >
               {menu === 'addText' && (
-                <TextInput
-                  multiline
-                  autoFocus
-                  defaultValue=''
-                  onChangeText={t => {
-                    setValue(t)
-
-                    // console.log('RobotoMedium', RobotoMedium)
-                  }}
+                <View
                   style={{
-                    fontSize: 24,
-                    fontWeight: '600',
-                    color: '#fff',
-                    // textAlignVertical: 'center',
-                    textAlign: 'center',
-                    marginHorizontal: 20,
-                    // backgroundColor: color,
-                    borderRadius: 10
-                  }}
-                  onBlur={() => {}}
-                  onLayout={event => {
-                    var { x, y, width, height } = event.nativeEvent.layout
+                    // backgroundColor: 'yellow',
+                    flexDirection: 'row',
+                    justifyContent: 'center'
                   }}
                 >
-                  <Text
+                  <TextInput
+                    // multiline
+                    autoFocus
+                    defaultValue=''
+                    onChangeText={t => {
+                      setValue(t)
+
+                      // console.log('RobotoMedium', RobotoMedium)
+                    }}
                     style={{
+                      padding: 8,
+                      fontSize: 24,
+                      fontWeight: '600',
+                      color: '#000000',
+                      textAlignVertical: 'center',
+                      textAlign: 'center',
+                      marginHorizontal: 20,
+                      backgroundColor: color,
+                      borderRadius: 6
+                    }}
+                    onBlur={() => {}}
+                    onLayout={event => {
+                      var { x, y, width, height } = event.nativeEvent.layout
+                    }}
+                  >
+                    {/* <Text
+                    style={{
+                      padding: 8,
+
+                      fontSize: 24,
+                      fontWeight: '600',
+                      color: '#000000',
+                      textAlign: 'center',
+                      marginHorizontal: 20,
+                      borderRadius: 6,
                       backgroundColor: color
                     }}
                     onLayout={event => {
@@ -131,8 +155,9 @@ export default function TextEditor() {
                     }}
                   >
                     {value}
-                  </Text>
-                </TextInput>
+                  </Text> */}
+                  </TextInput>
+                </View>
               )}
             </View>
             <TextTool />

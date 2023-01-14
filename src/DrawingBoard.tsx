@@ -8,15 +8,9 @@ import {
   rect,
   rrect,
   SkiaDomView,
-  SkiaMutableValue,
   SkRect,
-  useImage,
-  useValue
+  useImage
 } from '@shopify/react-native-skia'
-import {
-  Skia,
-  SkMatrix
-} from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
@@ -76,7 +70,6 @@ export default function DrawingBoard({
   const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
   const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
   const mode = useWatchDrawing(s => s.mode) as ToolbarMode
-  console.log(mode)
 
   const elementComponents = useMemo(
     () =>
@@ -179,7 +172,7 @@ export default function DrawingBoard({
         })
       }}
     >
-      <View>
+      <View style={{ overflow: 'hidden' }}>
         {!!imgRect && (
           <Canvas
             onTouch={touchHandler}
@@ -187,6 +180,13 @@ export default function DrawingBoard({
               ...imgRect
             }}
             ref={innerRef}
+            onLayout={event => {
+              var { x, y, width, height } = event.nativeEvent.layout
+              context.commands.setCanvasSize({
+                width,
+                height
+              })
+            }}
           >
             <Group
               clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
