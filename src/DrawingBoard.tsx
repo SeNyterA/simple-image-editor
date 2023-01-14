@@ -218,7 +218,7 @@ export default function DrawingBoard({
                 key={index}
                 dimensions={e.dimensions}
                 matrix={e.matrix}
-                debug={true}
+                // debug={true}
                 text={e.text}
                 index={index}
               />

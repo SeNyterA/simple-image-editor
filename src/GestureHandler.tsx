@@ -169,7 +169,7 @@ export const GestureHandler = ({
             backgroundColor: '#fff',
             fontSize: 24,
             height: '100%',
-            borderRadius: 10,
+            borderRadius: 6,
             textAlign: 'center',
             textAlignVertical: 'center'
           }}
