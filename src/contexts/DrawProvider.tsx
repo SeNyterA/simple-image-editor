@@ -13,7 +13,10 @@ export type ToobarMemu =
   | 'addText'
   | 'editText'
 
+export type ToolbarMode = 'export' | 'edit'
+
 export type DrawboardState = {
+  mode: ToolbarMode
   menu: ToobarMemu
   elements: DrawingElement[]
   textElements: DrawingElement[]
@@ -29,6 +32,7 @@ export type DrawboardCommands = {
   setElements: (elements: DrawingElement[]) => void
   setColor: (color: any) => void
   setSize: (size: number) => void
+  setMode: (mode: ToolbarMode) => void
   setPathType: (pathType: PathType) => void
   setBackgroundColor: (backgroundColor?: any) => void
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void
@@ -48,6 +52,7 @@ const DrawContext = createContext<DrawboardContextType | undefined>(undefined)
 const createDrawProviderValue = (): DrawboardContextType => {
   const state: DrawboardState = {
     menu: 'drawing',
+    mode: 'edit',
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',
@@ -99,8 +104,11 @@ const createDrawProviderValue = (): DrawboardContextType => {
       notifyListeners(state)
     },
     addTextElement: (element: DrawingElement) => {
-      console.log('sssssdasdasdsadas')
       state.textElements = [...state.textElements, element]
+      notifyListeners(state)
+    },
+    setMode: (mode: ToolbarMode) => {
+      state.mode = mode
       notifyListeners(state)
     }
   }

@@ -1,9 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
 import type {
-  SkFont,
-  SkiaMutableValue,
-  SkMatrix,
+  SkFont, SkMatrix,
   SkRect
 } from '@shopify/react-native-skia'
 import {
@@ -14,6 +12,7 @@ import {
   Skia,
   Text
 } from '@shopify/react-native-skia'
+import { DrawboardContextType } from './contexts/DrawProvider'
 
 const x = 10
 const y = 10
@@ -31,15 +30,21 @@ interface LocationStickerProps {
   font: SkFont
   text: string
   rectDimensions?: SkRect
+  index: number
+  context: DrawboardContextType
 }
 
 export const LocationSticker = ({
-  matrix,
+  // matrix,
   font,
   text,
-  rectDimensions = rect(10, 10, 200, 40)
+  rectDimensions = rect(10, 10, 200, 40),
+  index,
+  context
 }: LocationStickerProps) => {
   // const aa = Skia.Path.MakeFromText(text, 0, 0, font)
+
+  // const {} = useWatchDrawing(e => e.textElements[index]?.matrix)
 
   return (
     <Group
@@ -49,8 +54,11 @@ export const LocationSticker = ({
       ]}
     >
       <Group
-        matrix={matrix}
-        origin={{ x: rectDimensions.width / 2, y: rectDimensions.height / 2 }}
+        matrix={(context.state.textElements[index] as any).matrix}
+        origin={{
+          x: rectDimensions.width / 2,
+          y: rectDimensions.height / 2
+        }}
       >
         <RoundedRect
           color='white'

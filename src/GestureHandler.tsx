@@ -1,4 +1,9 @@
-import { SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
+import {
+  Skia,
+  SkMatrix,
+  SkRect,
+  useSharedValueEffect
+} from '@shopify/react-native-skia'
 import React from 'react'
 import { TextInput } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
@@ -6,20 +11,23 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated'
-import { identity4, processTransform3d } from 'react-native-redash'
+import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
+import { useDrawContext } from './contexts/DrawProvider'
 
 interface GestureHandlerProps {
-  // matrix: SkiaMutableValue<SkMatrix>
+  matrix: SkMatrix
   dimensions: SkRect
   debug?: boolean
   text: string
+  index: number
 }
 
 export const GestureHandler = ({
-  // matrix: skMatrix,
+  matrix: skMatrix,
   dimensions,
   debug,
-  text
+  text,
+  index
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
@@ -30,8 +38,15 @@ export const GestureHandler = ({
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
 
+  const context = useDrawContext()
+
   useSharedValueEffect(() => {
-    // skMatrix.current = Skia.Matrix(toMatrix3(matrix.value) as any)
+    // skMatrix = Skia.Matrix(toMatrix3(matrix.value) as any)
+
+    const aa = context.state.textElements[index]
+    if (aa.type === 'text') {
+      aa.matrix = Skia.Matrix(toMatrix3(matrix.value) as any)
+    }
   }, matrix)
 
   const dragGesture = Gesture.Pan()

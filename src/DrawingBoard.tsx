@@ -19,6 +19,7 @@ import {
 } from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
+import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
 import { DrawingElement } from './contexts/type'
 import { GestureHandler } from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
@@ -71,9 +72,11 @@ export default function DrawingBoard({
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
-
+  const context = useDrawContext()
   const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
   const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
+  const mode = useWatchDrawing(s => s.mode) as ToolbarMode
+  console.log(mode)
 
   const elementComponents = useMemo(
     () =>
@@ -131,6 +134,30 @@ export default function DrawingBoard({
     [elements]
   )
 
+  const elementTextComponents = useMemo(
+    () =>
+      textElements.map((e: DrawingElement, index) => {
+        switch (e.type) {
+          case 'text':
+            return (
+              <LocationSticker
+                key={index}
+                text={e.text}
+                font={e.font}
+                matrix={e.matrix}
+                rectDimensions={e.dimensions}
+                index={index}
+                context={context}
+              />
+            )
+
+          default:
+        }
+      }),
+
+    [textElements]
+  )
+
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
     canvasW: canvasSize.width,
@@ -152,46 +179,52 @@ export default function DrawingBoard({
         })
       }}
     >
-      {!!imgRect && (
-        <Canvas
-          onTouch={touchHandler}
-          style={{
-            ...imgRect
-          }}
-          ref={innerRef}
-        >
-          <Group
-            clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+      <View>
+        {!!imgRect && (
+          <Canvas
+            onTouch={touchHandler}
+            style={{
+              ...imgRect
+            }}
+            ref={innerRef}
           >
-            {!!image && <Image image={image} fit='contain' {...imgRect} />}
-            {elementComponents}
-            {textElements.map(
-              (e, index) =>
-                e.type === 'text' && (
-                  <LocationSticker
-                    key={index}
-                    text={e.text}
-                    font={e.font}
-                    matrix={e.matrix}
-                    rectDimensions={e.dimensions}
-                  />
-                )
-            )}
-          </Group>
-        </Canvas>
-      )}
+            <Group
+              clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+            >
+              {!!image && <Image image={image} fit='contain' {...imgRect} />}
+              {elementComponents}
+              {mode === 'export' && elementTextComponents}
+              {/* {mode === 'export' &&
+                textElements.map(
+                  (e, index) =>
+                    e.type === 'text' && (
+                      <LocationSticker
+                        key={index}
+                        text={e.text}
+                        font={e.font}
+                        matrix={e.matrix}
+                        rectDimensions={e.dimensions}
+                      />
+                    )
+                )} */}
+            </Group>
+          </Canvas>
+        )}
 
-      {textElements.map(
-        e =>
-          e.type === 'text' && (
-            <GestureHandler
-              dimensions={e.dimensions}
-              // matrix={useValue(e.matrix)}
-              debug={true}
-              text={e.text}
-            />
-          )
-      )}
+        {textElements.map(
+          (e, index) =>
+            e.type === 'text' && (
+              <GestureHandler
+                key={index}
+                dimensions={e.dimensions}
+                matrix={e.matrix}
+                debug={true}
+                text={e.text}
+                index={index}
+              />
+            )
+        )}
+      </View>
     </View>
   )
 }
