@@ -8,10 +8,15 @@ import {
   rect,
   rrect,
   SkiaDomView,
+  SkiaMutableValue,
   SkRect,
   useImage,
   useValue
 } from '@shopify/react-native-skia'
+import {
+  Skia,
+  SkMatrix
+} from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import { DrawingElement } from './contexts/type'
@@ -62,14 +67,13 @@ export default function DrawingBoard({
     width: width,
     height: height - 50
   })
-  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
-
-  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
-
   const touchHandler = useTouchDrawing()
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
+
+  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
+  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
 
   const elementComponents = useMemo(
     () =>
@@ -161,32 +165,33 @@ export default function DrawingBoard({
           >
             {!!image && <Image image={image} fit='contain' {...imgRect} />}
             {elementComponents}
-            {textElements.map(
+            {/* {textElements.map(
               (e, index) =>
                 e.type === 'text' && (
                   <LocationSticker
                     key={index}
                     text={e.text}
                     font={e.font}
-                    matrix={e.matrix}
+                    matrix={matrixs.current[index]}
                     rectDimensions={e.dimensions}
                   />
                 )
-            )}
+            )} */}
           </Group>
         </Canvas>
       )}
 
-      {/* {textElements.map(
+      {textElements.map(
         e =>
           e.type === 'text' && (
             <GestureHandler
               dimensions={e.dimensions}
-              matrix={useValue(e.matrix)}
+              // matrix={useValue(e.matrix)}
               debug={true}
+              text={e.text}
             />
           )
-      )} */}
+      )}
     </View>
   )
 }

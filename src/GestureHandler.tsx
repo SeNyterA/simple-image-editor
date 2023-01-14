@@ -1,31 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-/* eslint-disable prettier/prettier */
-import {
-  Skia,
-  SkiaMutableValue,
-  SkMatrix,
-  SkRect,
-  useSharedValueEffect
-} from '@shopify/react-native-skia'
+import { SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
 import React from 'react'
+import { TextInput } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated'
-import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
+import { identity4, processTransform3d } from 'react-native-redash'
 
 interface GestureHandlerProps {
-  matrix: SkiaMutableValue<SkMatrix>
+  // matrix: SkiaMutableValue<SkMatrix>
   dimensions: SkRect
   debug?: boolean
+  text: string
 }
 
 export const GestureHandler = ({
-  matrix: skMatrix,
+  // matrix: skMatrix,
   dimensions,
-  debug
+  debug,
+  text
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
@@ -37,7 +31,7 @@ export const GestureHandler = ({
   const matrix = useSharedValue(identity4)
 
   useSharedValueEffect(() => {
-    skMatrix.current = Skia.Matrix(toMatrix3(matrix.value) as any)
+    // skMatrix.current = Skia.Matrix(toMatrix3(matrix.value) as any)
   }, matrix)
 
   const dragGesture = Gesture.Pan()
@@ -154,7 +148,20 @@ export const GestureHandler = ({
 
   return (
     <GestureDetector gesture={composed}>
-      <Animated.View style={style} />
+      <Animated.View style={style}>
+        <TextInput
+          style={{
+            backgroundColor: '#fff',
+            fontSize: 24,
+            height: '100%',
+            borderRadius: 10,
+            textAlign: 'center',
+            textAlignVertical: 'center'
+          }}
+        >
+          {text}
+        </TextInput>
+      </Animated.View>
     </GestureDetector>
   )
 }
