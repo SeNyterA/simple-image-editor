@@ -1,6 +1,11 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-len */
-import type { SkFont, SkiaMutableValue, SkMatrix, SkRect } from '@shopify/react-native-skia'
+import type {
+  SkFont,
+  SkiaMutableValue,
+  SkMatrix,
+  SkRect
+} from '@shopify/react-native-skia'
 import {
   Group,
   rect,
@@ -22,7 +27,7 @@ const path = Skia.Path.MakeFromSVGString(
 const bounds = path.computeTightBounds()
 
 interface LocationStickerProps {
-  matrix: SkiaMutableValue<SkMatrix>
+  matrix: SkMatrix
   font: SkFont
   text: string
   rectDimensions?: SkRect

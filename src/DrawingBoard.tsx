@@ -165,18 +165,18 @@ export default function DrawingBoard({
           >
             {!!image && <Image image={image} fit='contain' {...imgRect} />}
             {elementComponents}
-            {/* {textElements.map(
+            {textElements.map(
               (e, index) =>
                 e.type === 'text' && (
                   <LocationSticker
                     key={index}
                     text={e.text}
                     font={e.font}
-                    matrix={matrixs.current[index]}
+                    matrix={e.matrix}
                     rectDimensions={e.dimensions}
                   />
                 )
-            )} */}
+            )}
           </Group>
         </Canvas>
       )}
