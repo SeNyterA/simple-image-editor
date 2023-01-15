@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
 import { useDrawContext } from './contexts/DrawProvider'
+import useWatchDrawing from './hooks/useWatchDrawing'
 
 interface GestureHandlerProps {
   matrix: SkMatrix
@@ -41,6 +42,8 @@ export const GestureHandler = ({
   const matrix = useSharedValue(identity4)
 
   const context = useDrawContext()
+
+  const state = useWatchDrawing(state => state.textElements[index])
 
   useSharedValueEffect(() => {
     const aa = context.state.textElements[index]
@@ -132,9 +135,7 @@ export const GestureHandler = ({
 
   const select = Gesture.Tap()
     .numberOfTaps(1)
-    .onEnd(() => {
-      console.log('edittext')
-    })
+    .onEnd(() => {})
 
   const composed = Gesture.Race(
     select,

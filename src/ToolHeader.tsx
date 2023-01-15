@@ -1,5 +1,5 @@
 import { ImageFormat, SkiaDomView } from '@shopify/react-native-skia'
-import React from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
 import Share from 'react-native-share'
@@ -15,21 +15,31 @@ export default function ToolHeader({
   const mode = useWatchDrawing(s => s.mode) as ToolbarMode
 
   const share = async () => {
-    await commands.setMode(mode === 'edit' ? 'export' : 'edit')
-    // const image = innerRef.current?.makeImageSnapshot()
+    // await commands.setMode(mode === 'edit' ? 'export' : 'edit')
+    const image = innerRef.current?.makeImageSnapshot()
 
-    // if (image) {
-    //   const data = image.encodeToBase64(ImageFormat.PNG, 100)
-    //   const url = `data:image/png;base64,${data}`
-    //   const shareOptions = {
-    //     title: 'Sharing image from awesome drawing app',
-    //     message: 'My drawing',
-    //     url,
-    //     failOnCancel: false
-    //   }
-    //   await Share.open(shareOptions)
-    // }
+    if (image) {
+      const data = image.encodeToBase64(ImageFormat.PNG, 100)
+      const url = `data:image/png;base64,${data}`
+      const shareOptions = {
+        title: 'Sharing image from awesome drawing app',
+        message: 'My drawing',
+        url,
+        failOnCancel: false
+      }
+      await Share.open(shareOptions)
+
+      await commands.setMode('edit')
+    }
   }
+
+  useLayoutEffect(() => {
+    if (mode === 'export') {
+      setTimeout(() => {
+        share()
+      }, 2000)
+    }
+  }, [mode])
 
   return (
     <View
@@ -66,7 +76,7 @@ export default function ToolHeader({
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          share()
+          commands.setMode('export')
         }}
       >
         <Text
