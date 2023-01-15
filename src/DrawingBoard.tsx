@@ -221,6 +221,7 @@ export default function DrawingBoard({
                 // debug={true}
                 text={e.text}
                 index={index}
+                color={e.color}
               />
             )
         )}

@@ -1,4 +1,4 @@
-import { rect, size, Skia, useFont } from '@shopify/react-native-skia'
+import { rect, Skia, useFont } from '@shopify/react-native-skia'
 import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -47,7 +47,8 @@ export default function TextEditor() {
           right: 0,
           bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          paddingBottom: insets.bottom
+          paddingBottom: insets.bottom,
+          paddingTop: insets.top
         }
       : {
           left: 0,
@@ -82,11 +83,12 @@ export default function TextEditor() {
                 dimensions: dime,
                 matrix: Skia.Matrix(),
                 font: font,
-                text: value
+                text: value,
+                color: color
               }
               commands.addTextElement(e)
             }
-            commands?.setMenu('drawing')
+            commands?.setMenu('text')
           }}
         >
           <View
@@ -121,16 +123,16 @@ export default function TextEditor() {
 
                       // console.log('RobotoMedium', RobotoMedium)
                     }}
+                    value={value}
                     style={{
-                      padding: 8,
-                      fontSize: 24,
-                      fontWeight: '600',
-                      color: '#000000',
-                      textAlignVertical: 'center',
-                      textAlign: 'center',
-                      marginHorizontal: 20,
+                      padding: 6,
                       backgroundColor: color,
-                      borderRadius: 6
+                      marginHorizontal: 20,
+                      fontSize: 24,
+                      height: '100%',
+                      borderRadius: 6,
+                      textAlign: 'center',
+                      textAlignVertical: 'center'
                     }}
                     onBlur={() => {}}
                     onLayout={event => {

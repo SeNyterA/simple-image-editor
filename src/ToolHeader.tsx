@@ -40,6 +40,18 @@ export default function ToolHeader({
         padding: 10
       }}
     >
+      <TouchableOpacity onPress={() => commands?.setMenu('drawing')}>
+        <Text
+          style={{
+            color: '#fff',
+            paddingHorizontal: 6,
+            fontSize: 16,
+            fontWeight: '600'
+          }}
+        >
+          drawing
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => commands?.setMenu('addText')}>
         <Text
           style={{

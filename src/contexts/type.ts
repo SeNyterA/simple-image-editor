@@ -28,6 +28,7 @@ export type DrawingElement = {
       matrix: SkMatrix
       text: string
       font: SkFont
+      color: any
     }
 )
 

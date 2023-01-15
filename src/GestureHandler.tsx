@@ -20,6 +20,7 @@ interface GestureHandlerProps {
   debug?: boolean
   text: string
   index: number
+  color: any
 }
 
 export const GestureHandler = ({
@@ -27,7 +28,8 @@ export const GestureHandler = ({
   dimensions,
   debug,
   text,
-  index
+  index,
+  color
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
@@ -41,8 +43,6 @@ export const GestureHandler = ({
   const context = useDrawContext()
 
   useSharedValueEffect(() => {
-    // skMatrix = Skia.Matrix(toMatrix3(matrix.value) as any)
-
     const aa = context.state.textElements[index]
     if (aa.type === 'text') {
       aa.matrix = Skia.Matrix(toMatrix3(matrix.value) as any)
@@ -132,13 +132,11 @@ export const GestureHandler = ({
 
   const select = Gesture.Tap()
     .numberOfTaps(1)
-    .onStart(() => {})
     .onEnd(() => {
       console.log('edittext')
     })
 
   const composed = Gesture.Race(
-    zoomOut,
     select,
     Gesture.Simultaneous(
       dragGesture,
@@ -167,7 +165,7 @@ export const GestureHandler = ({
         <TextInput
           editable={false}
           style={{
-            backgroundColor: '#fff',
+            backgroundColor: color || '#fff',
             fontSize: 24,
             height: '100%',
             borderRadius: 6,
