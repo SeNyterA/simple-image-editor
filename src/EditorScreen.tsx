@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { useCanvasRef } from '@shopify/react-native-skia'
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { SafeAreaView, StatusBar, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { useDrawProvider } from './contexts/DrawProvider'
@@ -9,7 +9,6 @@ import TextEditor from './TextEditor'
 import ToolHeader from './ToolHeader'
 
 export default function EditorScreen() {
-  const [count, setCount] = useState(1)
   const DrawProvider = useDrawProvider()
   const skiaViewRef = useCanvasRef()
 
@@ -24,7 +23,7 @@ export default function EditorScreen() {
             overflow: 'hidden'
           }}
         >
-          <ToolHeader setCount={setCount} />
+          <ToolHeader innerRef={skiaViewRef} />
           <DrawingBoard innerRef={skiaViewRef} />
           {/* <ToolBottom /> */}
 

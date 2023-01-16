@@ -1,31 +1,36 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
-/* eslint-disable prettier/prettier */
 import {
   Skia,
-  SkiaMutableValue,
   SkMatrix,
   SkRect,
   useSharedValueEffect
 } from '@shopify/react-native-skia'
 import React from 'react'
+import { TextInput } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
+import { useDrawContext } from './contexts/DrawProvider'
+import useWatchDrawing from './hooks/useWatchDrawing'
 
 interface GestureHandlerProps {
-  matrix: SkiaMutableValue<SkMatrix>
+  matrix: SkMatrix
   dimensions: SkRect
   debug?: boolean
+  text: string
+  index: number
+  color: any
 }
 
 export const GestureHandler = ({
   matrix: skMatrix,
   dimensions,
-  debug
+  debug,
+  text,
+  index,
+  color
 }: GestureHandlerProps) => {
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
@@ -36,8 +41,15 @@ export const GestureHandler = ({
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
 
+  const context = useDrawContext()
+
+  const state = useWatchDrawing(state => state.textElements[index])
+
   useSharedValueEffect(() => {
-    skMatrix.current = Skia.Matrix(toMatrix3(matrix.value) as any)
+    const aa = context.state.textElements[index]
+    if (aa.type === 'text') {
+      aa.matrix = Skia.Matrix(toMatrix3(matrix.value) as any)
+    }
   }, matrix)
 
   const dragGesture = Gesture.Pan()
@@ -123,13 +135,9 @@ export const GestureHandler = ({
 
   const select = Gesture.Tap()
     .numberOfTaps(1)
-    .onStart(() => {})
-    .onEnd(() => {
-      console.log('edittext')
-    })
+    .onEnd(() => {})
 
   const composed = Gesture.Race(
-    zoomOut,
     select,
     Gesture.Simultaneous(
       dragGesture,
@@ -154,7 +162,21 @@ export const GestureHandler = ({
 
   return (
     <GestureDetector gesture={composed}>
-      <Animated.View style={style} />
+      <Animated.View style={style}>
+        <TextInput
+          editable={false}
+          style={{
+            backgroundColor: color || '#fff',
+            fontSize: 24,
+            height: '100%',
+            borderRadius: 6,
+            textAlign: 'center',
+            textAlignVertical: 'center'
+          }}
+        >
+          {text}
+        </TextInput>
+      </Animated.View>
     </GestureDetector>
   )
 }

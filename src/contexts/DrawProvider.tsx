@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react'
+import { Dimensions } from 'react-native'
 
-import { DrawingElement, PathType } from './type'
+import { DrawingElement, PathType, TextElement } from './type'
 
 export type ToobarMemu =
   | 'drawing'
@@ -13,14 +14,24 @@ export type ToobarMemu =
   | 'addText'
   | 'editText'
 
+export type ToolbarMode = 'export' | 'edit'
+
+export type CanvasSizeType = {
+  width: number
+  height: number
+}
+
 export type DrawboardState = {
+  mode: ToolbarMode
   menu: ToobarMemu
   elements: DrawingElement[]
+  textElements: TextElement[]
   selectedElement: DrawingElement | undefined
   color: any
   size: number
   backgroundColor?: any
   pathType: PathType
+  canvasSize: CanvasSizeType
 }
 
 export type DrawboardCommands = {
@@ -28,11 +39,14 @@ export type DrawboardCommands = {
   setElements: (elements: DrawingElement[]) => void
   setColor: (color: any) => void
   setSize: (size: number) => void
+  setMode: (mode: ToolbarMode) => void
   setPathType: (pathType: PathType) => void
   setBackgroundColor: (backgroundColor?: any) => void
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void
   addElement: (element: DrawingElement) => void
   removeElement: (index: number) => void
+  addTextElement: (elements: TextElement) => void
+  setCanvasSize: (canvasSize: CanvasSizeType) => void
 }
 
 export type DrawboardContextType = {
@@ -43,15 +57,22 @@ export type DrawboardContextType = {
 
 const DrawContext = createContext<DrawboardContextType | undefined>(undefined)
 
+const { width, height } = Dimensions.get('window')
 const createDrawProviderValue = (): DrawboardContextType => {
   const state: DrawboardState = {
     menu: 'drawing',
+    mode: 'edit',
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',
     size: 4,
     color: '#fff',
-    backgroundColor: '#000'
+    backgroundColor: '#000',
+    textElements: [],
+    canvasSize: {
+      width: width,
+      height: height - 50
+    }
   }
 
   const listeners = [] as ((state: DrawboardState) => void)[]
@@ -92,6 +113,18 @@ const createDrawProviderValue = (): DrawboardContextType => {
     },
     removeElement: index => {
       state.elements.pop()
+      notifyListeners(state)
+    },
+    addTextElement: (element: TextElement) => {
+      state.textElements = [...state.textElements, element]
+      notifyListeners(state)
+    },
+    setMode: (mode: ToolbarMode) => {
+      state.mode = mode
+      notifyListeners(state)
+    },
+    setCanvasSize: canvasSize => {
+      state.canvasSize = canvasSize
       notifyListeners(state)
     }
   }

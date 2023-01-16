@@ -4,18 +4,21 @@ import {
   DiscretePathEffect,
   Group,
   Image,
+  ImageFormat,
   Path,
-  rect,
-  rrect,
   SkiaDomView,
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
-import { DrawingElement } from './contexts/type'
+import Share from 'react-native-share'
+import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
+import { DrawingElement, TextElement } from './contexts/type'
+import { GestureHandler } from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
+import { LocationSticker } from './LocationSticker'
 
 const { width, height } = Dimensions.get('window')
 const getRectImage = ({
@@ -50,6 +53,10 @@ const getRectImage = ({
   return rect
 }
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout))
+}
+
 export default function DrawingBoard({
   innerRef
 }: {
@@ -59,12 +66,15 @@ export default function DrawingBoard({
     width: width,
     height: height - 50
   })
-  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
-
+  const [preExport, setPreExport] = useState(false)
   const touchHandler = useTouchDrawing()
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
+  const context = useDrawContext()
+  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
+  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
+  const mode = useWatchDrawing(s => s.mode) as ToolbarMode
 
   const elementComponents = useMemo(
     () =>
@@ -122,12 +132,53 @@ export default function DrawingBoard({
     [elements]
   )
 
+  const elementTextComponents = useMemo(
+    () =>
+      textElements.map((e: DrawingElement, index) => (
+        <LocationSticker
+          key={index}
+          index={index}
+          textElement={context.state.textElements[index]}
+        />
+      )),
+    [textElements]
+  )
+
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
     canvasW: canvasSize.width,
     imgH: image?.height(),
     imgW: image?.width()
   })
+
+  const share = async () => {
+    await wait(100)
+    const image = innerRef.current?.makeImageSnapshot()
+    if (image) {
+      const data = image.encodeToBase64(ImageFormat.PNG, 100)
+      const url = `data:image/png;base64,${data}`
+      const shareOptions = {
+        title: 'Sharing image from awesome drawing app',
+        message: 'My drawing',
+        url,
+        failOnCancel: false
+      }
+      await Share.open(shareOptions)
+      setPreExport(false)
+      await context.commands.setMode('edit')
+    }
+  }
+
+  useEffect(() => {
+    if (mode === 'export') {
+      setPreExport(true)
+    }
+  }, [mode])
+
+  useEffect(() => {
+    if (preExport) share()
+  }, [preExport])
+
   return (
     <View
       style={{
@@ -143,22 +194,46 @@ export default function DrawingBoard({
         })
       }}
     >
-      {!!imgRect && (
-        <Canvas
-          onTouch={touchHandler}
-          style={{
-            ...imgRect
-          }}
-          ref={innerRef}
-        >
-          <Group
-            clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+      <View style={{ overflow: 'hidden', borderRadius: 10 }}>
+        {!!imgRect && (
+          <Canvas
+            onTouch={touchHandler}
+            style={{
+              ...imgRect
+            }}
+            ref={innerRef}
+            onLayout={event => {
+              var { x, y, width, height } = event.nativeEvent.layout
+              context.commands.setCanvasSize({
+                width,
+                height
+              })
+            }}
           >
-            {!!image && <Image image={image} fit='contain' {...imgRect} />}
-            {elementComponents}
-          </Group>
-        </Canvas>
-      )}
+            <Group
+            // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+            >
+              {!!image && <Image image={image} fit='contain' {...imgRect} />}
+              {elementComponents}
+              {mode === 'export' && elementTextComponents}
+            </Group>
+          </Canvas>
+        )}
+
+        {textElements.map(
+          (e, index) =>
+            e.type === 'text' && (
+              <GestureHandler
+                key={index}
+                dimensions={e.dimensions}
+                matrix={e.matrix}
+                text={e.text}
+                index={index}
+                color={e.color}
+              />
+            )
+        )}
+      </View>
     </View>
   )
 }

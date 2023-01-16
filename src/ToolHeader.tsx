@@ -1,9 +1,21 @@
+import { SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
-import { useDrawContext } from './contexts/DrawProvider'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BrushPenIcon, DeleteIcon, FontIcon } from './assets'
+import {
+  ToobarMemu as ToolbarMemu,
+  useDrawContext
+} from './contexts/DrawProvider'
+import useWatchDrawing from './hooks/useWatchDrawing'
 
-export default function ToolHeader({ setCount }) {
+export default function ToolHeader({
+  innerRef
+}: {
+  innerRef: React.RefObject<SkiaDomView>
+}) {
   const { commands } = useDrawContext()
+
+  const menu = useWatchDrawing(s => s.menu) as ToolbarMemu
 
   return (
     <View
@@ -11,22 +23,43 @@ export default function ToolHeader({ setCount }) {
         height: 60,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        alignItems: 'center',
         padding: 10
       }}
     >
-      <TouchableOpacity onPress={() => commands?.setMenu('addText')}>
-        <Text
-          style={{
-            color: '#fff',
-            paddingHorizontal: 6,
-            fontSize: 16,
-            fontWeight: '600'
-          }}
-        >
-          addText
-        </Text>
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('drawing')}
+        style={[styles.icon, menu === 'drawing' && styles.active]}
+      >
+        <BrushPenIcon
+          width={20}
+          height={20}
+          fill={`${menu === 'drawing' ? '#333' : '#FFF'}`}
+        />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setCount?.(Math.random())}>
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('addText')}
+        style={[styles.icon, menu === 'text' && styles.active]}
+      >
+        <FontIcon
+          width={20}
+          height={20}
+          fill={`${menu === 'text' ? '#333' : '#FFF'}`}
+        />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('drawing')}
+        style={[styles.icon]}
+      >
+        <DeleteIcon width={20} height={20} fill='#FFF' />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          commands.setMode('export')
+        }}
+      >
         <Text
           style={{
             color: '#fff',
@@ -41,3 +74,23 @@ export default function ToolHeader({ setCount }) {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    marginRight: 10
+  },
+  active: {
+    backgroundColor: '#fff'
+  },
+  line: {
+    height: 30,
+    marginHorizontal: 10,
+    width: 1,
+    backgroundColor: '#fff'
+  }
+})

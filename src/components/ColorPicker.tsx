@@ -12,8 +12,8 @@ import { useDrawContext } from '../contexts/DrawProvider'
 const colors = [
   '#FFF',
   '#000',
-  '#0FFA',
-  '#0F0A',
+  '#0FF',
+  '#0F0',
   '#FF0',
   '#ffa200',
   '#fe5f9f',
