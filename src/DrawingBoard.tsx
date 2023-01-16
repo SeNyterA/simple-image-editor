@@ -4,17 +4,17 @@ import {
   DiscretePathEffect,
   Group,
   Image,
+  ImageFormat,
   Path,
-  rect,
-  rrect,
   SkiaDomView,
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
+import Share from 'react-native-share'
 import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
-import { DrawingElement } from './contexts/type'
+import { DrawingElement, TextElement } from './contexts/type'
 import { GestureHandler } from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
@@ -53,6 +53,10 @@ const getRectImage = ({
   return rect
 }
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout))
+}
+
 export default function DrawingBoard({
   innerRef
 }: {
@@ -62,6 +66,7 @@ export default function DrawingBoard({
     width: width,
     height: height - 50
   })
+  const [preExport, setPreExport] = useState(false)
   const touchHandler = useTouchDrawing()
   const image = useImage(
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
@@ -129,25 +134,13 @@ export default function DrawingBoard({
 
   const elementTextComponents = useMemo(
     () =>
-      textElements.map((e: DrawingElement, index) => {
-        switch (e.type) {
-          case 'text':
-            return (
-              <LocationSticker
-                key={index}
-                text={e.text}
-                font={e.font}
-                matrix={e.matrix}
-                rectDimensions={e.dimensions}
-                index={index}
-                context={context}
-              />
-            )
-
-          default:
-        }
-      }),
-
+      textElements.map((e: DrawingElement, index) => (
+        <LocationSticker
+          key={index}
+          index={index}
+          textElement={context.state.textElements[index]}
+        />
+      )),
     [textElements]
   )
 
@@ -157,6 +150,35 @@ export default function DrawingBoard({
     imgH: image?.height(),
     imgW: image?.width()
   })
+
+  const share = async () => {
+    await wait(100)
+    const image = innerRef.current?.makeImageSnapshot()
+    if (image) {
+      const data = image.encodeToBase64(ImageFormat.PNG, 100)
+      const url = `data:image/png;base64,${data}`
+      const shareOptions = {
+        title: 'Sharing image from awesome drawing app',
+        message: 'My drawing',
+        url,
+        failOnCancel: false
+      }
+      await Share.open(shareOptions)
+      setPreExport(false)
+      await context.commands.setMode('edit')
+    }
+  }
+
+  useEffect(() => {
+    if (mode === 'export') {
+      setPreExport(true)
+    }
+  }, [mode])
+
+  useEffect(() => {
+    if (preExport) share()
+  }, [preExport])
+
   return (
     <View
       style={{
@@ -172,7 +194,7 @@ export default function DrawingBoard({
         })
       }}
     >
-      <View style={{ overflow: 'hidden' }}>
+      <View style={{ overflow: 'hidden', borderRadius: 10 }}>
         {!!imgRect && (
           <Canvas
             onTouch={touchHandler}
@@ -189,24 +211,11 @@ export default function DrawingBoard({
             }}
           >
             <Group
-              clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+            // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
             >
               {!!image && <Image image={image} fit='contain' {...imgRect} />}
               {elementComponents}
               {mode === 'export' && elementTextComponents}
-              {/* {mode === 'export' &&
-                textElements.map(
-                  (e, index) =>
-                    e.type === 'text' && (
-                      <LocationSticker
-                        key={index}
-                        text={e.text}
-                        font={e.font}
-                        matrix={e.matrix}
-                        rectDimensions={e.dimensions}
-                      />
-                    )
-                )} */}
             </Group>
           </Canvas>
         )}
@@ -218,7 +227,6 @@ export default function DrawingBoard({
                 key={index}
                 dimensions={e.dimensions}
                 matrix={e.matrix}
-                // debug={true}
                 text={e.text}
                 index={index}
                 color={e.color}

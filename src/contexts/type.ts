@@ -1,6 +1,5 @@
 import {
   SkFont,
-  SkiaMutableValue,
   SkImage,
   SkMatrix,
   SkPath,
@@ -31,6 +30,14 @@ export type DrawingElement = {
       color: any
     }
 )
+export type TextElement = {
+  type: 'text'
+  dimensions: SkRect
+  matrix: SkMatrix
+  text: string
+  font: SkFont
+  color: any
+}
 
 export type DrawCommands = {
   setColor: (color: any) => void

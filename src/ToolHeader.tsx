@@ -1,8 +1,11 @@
-import { ImageFormat, SkiaDomView } from '@shopify/react-native-skia'
-import React, { useEffect, useLayoutEffect } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
-import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
-import Share from 'react-native-share'
+import { SkiaDomView } from '@shopify/react-native-skia'
+import React from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BrushPenIcon, DeleteIcon, FontIcon } from './assets'
+import {
+  ToobarMemu as ToolbarMemu,
+  useDrawContext
+} from './contexts/DrawProvider'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
@@ -12,34 +15,7 @@ export default function ToolHeader({
 }) {
   const { commands } = useDrawContext()
 
-  const mode = useWatchDrawing(s => s.mode) as ToolbarMode
-
-  const share = async () => {
-    // await commands.setMode(mode === 'edit' ? 'export' : 'edit')
-    const image = innerRef.current?.makeImageSnapshot()
-
-    if (image) {
-      const data = image.encodeToBase64(ImageFormat.PNG, 100)
-      const url = `data:image/png;base64,${data}`
-      const shareOptions = {
-        title: 'Sharing image from awesome drawing app',
-        message: 'My drawing',
-        url,
-        failOnCancel: false
-      }
-      await Share.open(shareOptions)
-
-      await commands.setMode('edit')
-    }
-  }
-
-  useLayoutEffect(() => {
-    if (mode === 'export') {
-      setTimeout(() => {
-        share()
-      }, 2000)
-    }
-  }, [mode])
+  const menu = useWatchDrawing(s => s.menu) as ToolbarMemu
 
   return (
     <View
@@ -47,33 +23,38 @@ export default function ToolHeader({
         height: 60,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        alignItems: 'center',
         padding: 10
       }}
     >
-      <TouchableOpacity onPress={() => commands?.setMenu('drawing')}>
-        <Text
-          style={{
-            color: '#fff',
-            paddingHorizontal: 6,
-            fontSize: 16,
-            fontWeight: '600'
-          }}
-        >
-          drawing
-        </Text>
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('drawing')}
+        style={[styles.icon, menu === 'drawing' && styles.active]}
+      >
+        <BrushPenIcon
+          width={20}
+          height={20}
+          fill={`${menu === 'drawing' ? '#333' : '#FFF'}`}
+        />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => commands?.setMenu('addText')}>
-        <Text
-          style={{
-            color: '#fff',
-            paddingHorizontal: 6,
-            fontSize: 16,
-            fontWeight: '600'
-          }}
-        >
-          addText
-        </Text>
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('addText')}
+        style={[styles.icon, menu === 'text' && styles.active]}
+      >
+        <FontIcon
+          width={20}
+          height={20}
+          fill={`${menu === 'text' ? '#333' : '#FFF'}`}
+        />
       </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => commands?.setMenu('drawing')}
+        style={[styles.icon]}
+      >
+        <DeleteIcon width={20} height={20} fill='#FFF' />
+      </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => {
           commands.setMode('export')
@@ -93,3 +74,23 @@ export default function ToolHeader({
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    marginRight: 10
+  },
+  active: {
+    backgroundColor: '#fff'
+  },
+  line: {
+    height: 30,
+    marginHorizontal: 10,
+    width: 1,
+    backgroundColor: '#fff'
+  }
+})

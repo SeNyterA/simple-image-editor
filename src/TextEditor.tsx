@@ -31,8 +31,6 @@ export default function TextEditor() {
   const color = useWatchDrawing((state: DrawboardState) => state.color)
   const canvasSize = useWatchDrawing(s => s.canvasSize) as CanvasSizeType
 
-  console.log(canvasSize)
-
   const [value, setValue] = useState('text')
 
   // const locationMatrix = useValue(Skia.Matrix())
@@ -66,7 +64,7 @@ export default function TextEditor() {
       >
         <TouchableWithoutFeedback
           onPress={() => {
-            if (!!font) {
+            if (!!font && value) {
               const aa = Skia.Path.MakeFromText(value, 0, 0, font)
 
               const width = (aa?.getBounds().width || 200) + 16
@@ -89,6 +87,7 @@ export default function TextEditor() {
               commands.addTextElement(e)
             }
             commands?.setMenu('text')
+            setValue('')
           }}
         >
           <View
@@ -109,19 +108,15 @@ export default function TextEditor() {
               {menu === 'addText' && (
                 <View
                   style={{
-                    // backgroundColor: 'yellow',
                     flexDirection: 'row',
                     justifyContent: 'center'
                   }}
                 >
                   <TextInput
-                    // multiline
                     autoFocus
                     defaultValue=''
                     onChangeText={t => {
                       setValue(t)
-
-                      // console.log('RobotoMedium', RobotoMedium)
                     }}
                     value={value}
                     style={{
@@ -138,27 +133,7 @@ export default function TextEditor() {
                     onLayout={event => {
                       var { x, y, width, height } = event.nativeEvent.layout
                     }}
-                  >
-                    {/* <Text
-                    style={{
-                      padding: 8,
-
-                      fontSize: 24,
-                      fontWeight: '600',
-                      color: '#000000',
-                      textAlign: 'center',
-                      marginHorizontal: 20,
-                      borderRadius: 6,
-                      backgroundColor: color
-                    }}
-                    onLayout={event => {
-                      var { x, y, width, height } = event.nativeEvent.layout
-                      console.log(x, y, width, height)
-                    }}
-                  >
-                    {value}
-                  </Text> */}
-                  </TextInput>
+                  />
                 </View>
               )}
             </View>

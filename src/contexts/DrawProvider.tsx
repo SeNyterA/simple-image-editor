@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
-import { DrawingElement, PathType } from './type'
+import { DrawingElement, PathType, TextElement } from './type'
 
 export type ToobarMemu =
   | 'drawing'
@@ -25,7 +25,7 @@ export type DrawboardState = {
   mode: ToolbarMode
   menu: ToobarMemu
   elements: DrawingElement[]
-  textElements: DrawingElement[]
+  textElements: TextElement[]
   selectedElement: DrawingElement | undefined
   color: any
   size: number
@@ -45,7 +45,7 @@ export type DrawboardCommands = {
   setSelectedElement: (selectedElement: DrawingElement | undefined) => void
   addElement: (element: DrawingElement) => void
   removeElement: (index: number) => void
-  addTextElement: (elements: DrawingElement) => void
+  addTextElement: (elements: TextElement) => void
   setCanvasSize: (canvasSize: CanvasSizeType) => void
 }
 
@@ -115,7 +115,7 @@ const createDrawProviderValue = (): DrawboardContextType => {
       state.elements.pop()
       notifyListeners(state)
     },
-    addTextElement: (element: DrawingElement) => {
+    addTextElement: (element: TextElement) => {
       state.textElements = [...state.textElements, element]
       notifyListeners(state)
     },
