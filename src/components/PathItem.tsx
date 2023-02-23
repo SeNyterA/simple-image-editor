@@ -4,10 +4,10 @@ import {
   Group,
   Path
 } from '@shopify/react-native-skia'
-import React, { memo } from 'react'
+import React from 'react'
 import useWatchDrawing from '../hooks/useWatchDrawing'
 
-const PathItem = ({ id }: { id: string }) => {
+export default function PathItem({ id }: { id: string }) {
   const element = useWatchDrawing(s => s.elements.find(e => e.id === id))
 
   const renderItem = () => {
@@ -56,7 +56,5 @@ const PathItem = ({ id }: { id: string }) => {
       }
   }
 
-  return <>{renderItem()}</>
+  return renderItem
 }
-
-export default memo(PathItem)

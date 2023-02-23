@@ -7,7 +7,7 @@ import {
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import Share from 'react-native-share'
 import PathItem from './components/PathItem'
@@ -130,36 +130,21 @@ export default function DrawingBoard({
             // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
             >
               {!!image && <Image image={image} fit='contain' {...imgRect} />}
-
               {compactElements.map((e, index) => {
                 switch (e.type) {
                   case 'path':
-                    return <PathItem id={e.id} key={e.id} />
+                    return <PathItem id={e.id} key={index} />
                   case 'text':
-                    return <LocationSticker key={e.id} id={e.id} />
+                    return <LocationSticker id={e.id} key={index} />
+                  default:
+                    return <></>
                 }
               })}
             </Group>
           </Canvas>
         )}
 
-        {/* {textElements.map(
-          (e, index) =>
-            e.type === 'text' && (
-              <GestureHandler
-                id={e.id}
-                key={index}
-                dimensions={e.dimensions}
-                x
-                matrix={e.matrix}
-                text={e.text}
-                index={index}
-                color={e.color}
-              />
-            )
-        )} */}
-
-        {compactElements.map((e, index) => {
+        {/* {compactElements.map((e, index) => {
           switch (e.type) {
             case 'text':
               return (
@@ -171,7 +156,7 @@ export default function DrawingBoard({
                 />
               )
           }
-        })}
+        })} */}
       </View>
     </View>
   )

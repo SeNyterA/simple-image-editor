@@ -46,11 +46,13 @@ export type DrawboardContextType = {
   addListener: (listener: (state: DrawboardState) => void) => () => void
 }
 
-const DrawContext = createContext<DrawboardContextType | undefined>(undefined)
+export const DrawContext = createContext<DrawboardContextType | undefined>(
+  undefined
+)
 
 const { width, height } = Dimensions.get('window')
 const createDrawProviderValue = (): DrawboardContextType => {
-  const state: DrawboardState = {
+  let state: DrawboardState = {
     menu: 'drawing',
     mode: 'edit',
     elements: [],
@@ -70,8 +72,11 @@ const createDrawProviderValue = (): DrawboardContextType => {
 
   const commands: DrawboardCommands = {
     setState: (newState: Partial<DrawboardState>) => {
-      const keys = Object.keys(newState) as (keyof DrawboardState)[]
-      keys.map(e => state[e] === newState[e])
+      // const keys = Object.keys(newState) as (keyof DrawboardState)[]
+      // keys.map(e => state[e] === newState[e])
+      // console.log('sssss', newState)
+
+      state = { ...state, ...newState }
       notifyListeners(state)
     },
     notify: () => {
