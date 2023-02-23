@@ -10,7 +10,9 @@ export default function ToolHeader({
 }: {
   innerRef: React.RefObject<SkiaDomView>
 }) {
-  const { commands } = useDrawContext()
+  const {
+    commands: { setState }
+  } = useDrawContext()
 
   const menu = useWatchDrawing(s => s.menu)
 
@@ -25,7 +27,7 @@ export default function ToolHeader({
       }}
     >
       <TouchableOpacity
-        onPress={() => commands?.setMenu('drawing')}
+        onPress={() => setState({ menu: 'drawing' })}
         style={[styles.icon, menu === 'drawing' && styles.active]}
       >
         <BrushPenIcon
@@ -35,7 +37,7 @@ export default function ToolHeader({
         />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => commands?.setMenu('addText')}
+        onPress={() => setState({ menu: 'addText' })}
         style={[styles.icon, menu === 'text' && styles.active]}
       >
         <FontIcon
@@ -45,18 +47,11 @@ export default function ToolHeader({
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => commands?.setMenu('drawing')}
-        style={[styles.icon]}
-      >
+      <TouchableOpacity style={[styles.icon]}>
         <DeleteIcon width={20} height={20} fill='#FFF' />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => {
-          commands.setMode('export')
-        }}
-      >
+      <TouchableOpacity onPress={() => {}}>
         <Text
           style={{
             color: '#fff',

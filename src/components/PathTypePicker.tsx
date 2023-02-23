@@ -7,20 +7,20 @@ import useWatchDrawing from '../hooks/useWatchDrawing'
 export default function PathTypePicker() {
   const pathType = useWatchDrawing(state => state.pathType)
   const {
-    commands: { setPathType }
+    commands: { setState }
   } = useDrawContext()
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <TouchableOpacity
         style={[styles.icon, pathType === 'normal' && styles.active]}
-        onPress={() => setPathType('normal')}
+        onPress={() => setState({ pathType: 'normal' })}
       >
         <BrushStrokeIcon fill='#FFF' height={28} width={28} />
       </TouchableOpacity>
       <View style={{ margin: 3 }} />
       <TouchableOpacity
         style={[styles.icon, pathType === 'dashed' && styles.active]}
-        onPress={() => setPathType('dashed')}
+        onPress={() => setState({ pathType: 'dashed' })}
       >
         <BrushDashedIcon fill='#FFF' height={28} width={28} />
       </TouchableOpacity>

@@ -13,6 +13,7 @@ export const createPath = (
   const path = Skia.Path.Make()
   path.moveTo(x, y)
   return {
+    id: Math.random() + '',
     type: 'path',
     path,
     color,
@@ -23,7 +24,7 @@ export const createPath = (
 
 export const useTouchDrawing = () => {
   const prevPointRef = useRef<SkPoint>()
-  const stateRef = useRef<'create' | 'drawing'>('create')
+  // const stateRef = useRef<'create' | 'drawing'>('create')
 
   const drawContext = useDrawContext()
 
@@ -32,11 +33,9 @@ export const useTouchDrawing = () => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          const { color, size, pathType } = drawContext.state
-          drawContext.commands.addElement(
-            createPath(x, y, color, size, pathType)
-          )
-          stateRef.current = 'create'
+          const { color, size, pathType, elements } = drawContext.state
+          elements.push(createPath(x, y, color as any, size, pathType))
+          drawContext.commands.notify()
           break
         }
         default:
@@ -51,15 +50,18 @@ export const useTouchDrawing = () => {
           if (drawContext.state.elements.length) {
             const element =
               drawContext.state.elements[drawContext.state.elements.length - 1]
+
             const xMid = (prevPointRef.current!.x + x) / 2
             const yMid = (prevPointRef.current!.y + y) / 2
-            element.path.quadTo(
-              prevPointRef.current!.x,
-              prevPointRef.current!.y,
-              xMid,
-              yMid
-            )
-            stateRef.current = 'drawing'
+
+            if (element.type === 'path') {
+              element.path.quadTo(
+                prevPointRef.current!.x,
+                prevPointRef.current!.y,
+                xMid,
+                yMid
+              )
+            }
           }
           break
         }
@@ -72,8 +74,8 @@ export const useTouchDrawing = () => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          if (stateRef.current === 'create')
-            drawContext.commands.removeElement(0)
+          // if (stateRef.current === 'create')
+          //   // drawContext.commands.removeElement(0)
 
           break
         }

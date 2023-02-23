@@ -7,13 +7,14 @@ import {
   rrect,
   Text
 } from '@shopify/react-native-skia'
-import useWatchDrawing from './hooks/useWatchDrawing'
+import { memo } from 'react'
+import useWatchDrawing from '../hooks/useWatchDrawing'
 
 interface LocationStickerProps {
   id: string
 }
 
-export const LocationSticker = ({ id }: LocationStickerProps) => {
+const TextItem = ({ id }: LocationStickerProps) => {
   const textElement = useWatchDrawing(s =>
     s.elements.find(e => e.type === 'text' && e.id === id)
   )
@@ -63,3 +64,4 @@ export const LocationSticker = ({ id }: LocationStickerProps) => {
     )
   else return <></>
 }
+export default memo(TextItem)

@@ -1,7 +1,8 @@
+import { Color } from '@shopify/react-native-skia'
 import React, { createContext, useContext, useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
-import { DrawingElement, PathType, TextElement } from './type'
+import { DrawingElement, PathType } from './type'
 
 export type ToobarMemu =
   | 'drawing'
@@ -25,28 +26,18 @@ export type DrawboardState = {
   mode: ToolbarMode
   menu: ToobarMemu
   elements: DrawingElement[]
-  textElements: TextElement[]
   selectedElement: DrawingElement | undefined
-  color: any
+  color: Color
   size: number
-  backgroundColor?: any
+  backgroundColor: Color | undefined
   pathType: PathType
   canvasSize: CanvasSizeType
 }
 
 export type DrawboardCommands = {
-  setMenu: (menu: ToobarMemu) => void
-  setElements: (elements: DrawingElement[]) => void
-  setColor: (color: any) => void
-  setSize: (size: number) => void
-  setMode: (mode: ToolbarMode) => void
-  setPathType: (pathType: PathType) => void
-  setBackgroundColor: (backgroundColor?: any) => void
-  setSelectedElement: (selectedElement: DrawingElement | undefined) => void
-  addElement: (element: DrawingElement) => void
-  removeElement: (index: number) => void
-  addTextElement: (elements: TextElement) => void
-  setCanvasSize: (canvasSize: CanvasSizeType) => void
+  getState: () => DrawboardState
+  setState: (newState: Partial<DrawboardState>) => void
+  notify: () => void
 }
 
 export type DrawboardContextType = {
@@ -68,7 +59,6 @@ const createDrawProviderValue = (): DrawboardContextType => {
     size: 4,
     color: '#fff',
     backgroundColor: '#000',
-    textElements: [],
     canvasSize: {
       width: width,
       height: height - 50
@@ -79,54 +69,15 @@ const createDrawProviderValue = (): DrawboardContextType => {
   const notifyListeners = (s: DrawboardState) => listeners.forEach(l => l(s))
 
   const commands: DrawboardCommands = {
-    setMenu: (menu: ToobarMemu) => {
-      state.menu = menu
+    setState: (newState: Partial<DrawboardState>) => {
+      const keys = Object.keys(newState) as (keyof DrawboardState)[]
+      keys.map(e => state[e] === newState[e])
       notifyListeners(state)
     },
-    setElements: (elements: DrawingElement[]) => {
-      state.elements = elements
+    notify: () => {
       notifyListeners(state)
     },
-    addElement: (element: DrawingElement) => {
-      state.elements = [...state.elements, element]
-      notifyListeners(state)
-    },
-    setColor: (color: any) => {
-      state.color = color
-      notifyListeners(state)
-    },
-    setSize: (size: number) => {
-      state.size = size
-      notifyListeners(state)
-    },
-    setPathType: (pathType: PathType) => {
-      state.pathType = pathType
-      notifyListeners(state)
-    },
-    setBackgroundColor: (color: any) => {
-      state.backgroundColor = color
-      notifyListeners(state)
-    },
-    setSelectedElement: (element?: DrawingElement | undefined) => {
-      state.selectedElement = element
-      notifyListeners(state)
-    },
-    removeElement: index => {
-      state.elements.pop()
-      notifyListeners(state)
-    },
-    addTextElement: (element: TextElement) => {
-      state.textElements = [...state.textElements, element]
-      notifyListeners(state)
-    },
-    setMode: (mode: ToolbarMode) => {
-      state.mode = mode
-      notifyListeners(state)
-    },
-    setCanvasSize: canvasSize => {
-      state.canvasSize = canvasSize
-      notifyListeners(state)
-    }
+    getState: () => state
   }
 
   return {

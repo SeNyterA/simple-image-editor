@@ -1,51 +1,26 @@
-import {
-  SkFont,
-  SkImage,
-  SkMatrix,
-  SkPath,
-  SkRect
-} from '@shopify/react-native-skia'
-
-export type DrawingElementType = 'path' | 'image' | 'text'
+import { SkFont, SkMatrix, SkPath, SkRect } from '@shopify/react-native-skia'
+import { Color } from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 
 export type PathType = 'normal' | 'dashed' | 'discreted'
+export type DrawingElementType = 'path' | 'text'
 
 export type DrawingElement = {
+  id: string
   type: DrawingElementType
+  matrix?: SkMatrix
+  color?: Color
+  dimensions?: SkRect
 } & (
   | {
       type: 'path'
       pathType: PathType
       path: SkPath
-      color: number
       size: number
     }
-  | { type: 'image'; path: SkPath; image: SkImage }
   | {
       type: 'text'
       dimensions: SkRect
-      matrix: SkMatrix
       text: string
       font: SkFont
-      color: any
     }
 )
-export type TextElement = {
-  type: 'text'
-  dimensions: SkRect
-  matrix: SkMatrix
-  text: string
-  font: SkFont
-  color: any
-}
-
-export type DrawCommands = {
-  setColor: (color: any) => void
-  setBackgroundColor: (color: any) => void
-  addElement: (element: DrawingElement) => void
-  deleteSelectedElements: () => void
-  deleteAllElements: () => void
-  setPathType: (type: PathType) => void
-  cleanUseless: () => Promise<void>
-  setSize: (size: number) => void
-}

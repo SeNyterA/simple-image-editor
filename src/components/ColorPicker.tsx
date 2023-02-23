@@ -1,13 +1,7 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet
-} from 'react-native'
 import React, { Fragment } from 'react'
-import useWatchDrawing from '../hooks/useWatchDrawing'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useDrawContext } from '../contexts/DrawProvider'
+import useWatchDrawing from '../hooks/useWatchDrawing'
 
 const colors = [
   '#FFF',
@@ -22,8 +16,9 @@ const colors = [
 
 export default function ColorPicker() {
   const color = useWatchDrawing(state => state.color)
+
   const {
-    commands: { setColor }
+    commands: { setState }
   } = useDrawContext()
   return (
     <View style={{ flexDirection: 'row', flex: 1 }}>
@@ -39,7 +34,7 @@ export default function ColorPicker() {
           <Fragment key={index}>
             <TouchableOpacity
               style={[styles.icon, c === color && styles.active]}
-              onPress={() => setColor(c)}
+              onPress={() => setState({ color: c })}
             >
               <View
                 style={{
