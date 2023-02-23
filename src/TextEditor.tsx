@@ -24,12 +24,10 @@ import useWatchDrawing from './hooks/useWatchDrawing'
 export default function TextEditor() {
   const { commands } = useDrawContext()
   const insets = useSafeAreaInsets()
-  const menu = useWatchDrawing(
-    (state: DrawboardState) => state.menu
-  ) as ToobarMemu
+  const menu = useWatchDrawing((state: DrawboardState) => state.menu)
 
   const color = useWatchDrawing((state: DrawboardState) => state.color)
-  const canvasSize = useWatchDrawing(s => s.canvasSize) as CanvasSizeType
+  const canvasSize = useWatchDrawing(s => s.canvasSize)
 
   const [value, setValue] = useState('text')
 

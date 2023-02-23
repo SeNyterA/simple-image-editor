@@ -2,10 +2,7 @@ import { SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { BrushPenIcon, DeleteIcon, FontIcon } from './assets'
-import {
-  ToobarMemu as ToolbarMemu,
-  useDrawContext
-} from './contexts/DrawProvider'
+import { useDrawContext } from './contexts/DrawProvider'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
@@ -15,7 +12,7 @@ export default function ToolHeader({
 }) {
   const { commands } = useDrawContext()
 
-  const menu = useWatchDrawing(s => s.menu) as ToolbarMemu
+  const menu = useWatchDrawing(s => s.menu)
 
   return (
     <View

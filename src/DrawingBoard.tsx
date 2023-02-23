@@ -72,9 +72,9 @@ export default function DrawingBoard({
     'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
   )
   const context = useDrawContext()
-  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
-  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
-  const mode = useWatchDrawing(s => s.mode) as ToolbarMode
+  const elements = useWatchDrawing(s => s.elements)
+  const textElements = useWatchDrawing(s => s.textElements)
+  const mode = useWatchDrawing(s => s.mode)
 
   const elementComponents = useMemo(
     () =>

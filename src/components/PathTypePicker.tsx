@@ -1,17 +1,11 @@
 import React from 'react'
-import {
-  StyleSheet,
-  TouchableOpacity,
-  TouchableOpacityBase,
-  View
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { BrushDashedIcon, BrushStrokeIcon } from '../assets'
 import { useDrawContext } from '../contexts/DrawProvider'
-import { PathType } from '../contexts/type'
 import useWatchDrawing from '../hooks/useWatchDrawing'
 
 export default function PathTypePicker() {
-  const pathType = useWatchDrawing(state => state.pathType) as PathType
+  const pathType = useWatchDrawing(state => state.pathType)
   const {
     commands: { setPathType }
   } = useDrawContext()
