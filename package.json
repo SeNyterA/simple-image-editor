@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "iosM": "react-native run-ios --udid=\"00008110-000168142193801E\""
+    "iosM": "react-native run-ios --udid=\"00008110-000168142193801E\"",
+    "pod": "cd ios && pod install"
   },
   "dependencies": {
     "@shopify/react-native-skia": "^0.1.170",
