@@ -10,6 +10,7 @@ import {
 import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import Share from 'react-native-share'
+import { CircleItem, RectItem } from './components/DemoCircle'
 import PathItem from './components/PathItem'
 import Test from './components/Test'
 import TextItem from './components/TextItem'
@@ -140,7 +141,8 @@ export default function DrawingBoard({
                     return <></>
                 }
               })}
-              <Test />
+              <CircleItem />
+              <RectItem />
             </Group>
           </Canvas>
         )}
