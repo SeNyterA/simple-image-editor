@@ -14,7 +14,8 @@ import PathItem from './components/PathItem'
 import Test from './components/Test'
 import TextItem from './components/TextItem'
 import { useDrawContext } from './contexts/DrawProvider'
-import { GestureHandler } from './GestureHandler'
+import GestureHandler from './GestureHandler'
+
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
@@ -147,9 +148,7 @@ export default function DrawingBoard({
         {compactElements.map((e, index) => {
           switch (e.type) {
             case 'text':
-              return (
-                <GestureHandler key={index} index={index} textElement={e} />
-              )
+              return <GestureHandler key={index} index={index} />
           }
         })}
       </View>

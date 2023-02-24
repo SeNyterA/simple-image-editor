@@ -22,7 +22,7 @@ export default function TextEditor() {
   const menu = useWatchDrawing((state: DrawboardState) => state.menu)
   const color = useWatchDrawing((state: DrawboardState) => state.color)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
-  const [value, setValue] = useState('text')
+  const [value, setValue] = useState('khang dep')
   const font = useFont(RobotoMedium, 24)
 
   const visible: ViewStyle =

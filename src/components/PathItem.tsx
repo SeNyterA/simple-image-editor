@@ -4,10 +4,10 @@ import {
   Group,
   Path
 } from '@shopify/react-native-skia'
-import React from 'react'
+import React, { memo } from 'react'
 import { PathElement } from '../contexts/type'
 
-export default function PathItem({ element }: { element: PathElement }) {
+const PathItem = ({ element }: { element: PathElement }) => {
   const renderItem = () => {
     switch (element.pathType) {
       case 'discreted':
@@ -55,3 +55,5 @@ export default function PathItem({ element }: { element: PathElement }) {
 
   return <>{renderItem()}</>
 }
+
+export default memo(PathItem)

@@ -1,5 +1,5 @@
 import { Skia, useSharedValueEffect } from '@shopify/react-native-skia'
-import React from 'react'
+import React, { memo } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   useAnimatedStyle,
@@ -12,16 +12,14 @@ import { TextElement } from './contexts/type'
 interface GestureHandlerProps {
   debug?: boolean
   index: number
-  textElement: TextElement
 }
 
-export const GestureHandler = ({
-  debug,
-  index,
-  textElement
-}: GestureHandlerProps) => {
+const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
+  console.log('render ', index)
   const context = useDrawContext()
-  const { x, y, width, height } = textElement.dimensions
+  const { x, y, width, height } = (
+    context.commands.getState().elements[index] as TextElement
+  ).dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
   const start = useSharedValue({ x: 0, y: 0 })
   const scale = useSharedValue(1)
@@ -161,3 +159,5 @@ export const GestureHandler = ({
     </GestureDetector>
   )
 }
+
+export default memo(GestureHandler)
