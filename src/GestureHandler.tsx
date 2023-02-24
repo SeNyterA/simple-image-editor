@@ -7,20 +7,21 @@ import Animated, {
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
 import { useDrawContext } from './contexts/DrawProvider'
+import { TextElement } from './contexts/type'
 
 interface GestureHandlerProps {
   debug?: boolean
   index: number
-  id: string
+  textElement: TextElement
 }
 
 export const GestureHandler = ({
   debug,
   index,
-  id
+  textElement
 }: GestureHandlerProps) => {
   const context = useDrawContext()
-  const { x, y, width, height } = context.state.elements[index].dimensions || {}
+  const { x, y, width, height } = textElement.dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
   const start = useSharedValue({ x: 0, y: 0 })
   const scale = useSharedValue(1)
@@ -30,11 +31,20 @@ export const GestureHandler = ({
   const matrix = useSharedValue(identity4)
 
   useSharedValueEffect(() => {
-    const e = context.state.elements[index]
-    if (e.type === 'text') {
-      e.matrix = Skia.Matrix(toMatrix3(matrix.value) as any)
-      context.commands.notify()
-    }
+    const elements = context.commands.getState().elements
+
+    context.commands.setState({
+      elements: elements.map((e, idx) =>
+        idx === index
+          ? {
+              ...e,
+              matrix: Skia.Matrix(toMatrix3(matrix.value) as any)
+            }
+          : e
+      )
+    })
+
+    context.commands.notify()
   }, matrix)
 
   const dragGesture = Gesture.Pan()
@@ -120,9 +130,7 @@ export const GestureHandler = ({
 
   const select = Gesture.Tap()
     .numberOfTaps(1)
-    .onEnd(() => {
-      console.log(id)
-    })
+    .onEnd(() => {})
 
   const composed = Gesture.Race(
     select,

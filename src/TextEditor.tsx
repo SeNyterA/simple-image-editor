@@ -1,4 +1,4 @@
-import { useFont } from '@shopify/react-native-skia'
+import { rect, Skia, useFont } from '@shopify/react-native-skia'
 import React, { useState } from 'react'
 import {
   KeyboardAvoidingView,
@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RobotoMedium } from './assets/fonts'
 import TextTool from './components/TextTool'
 import { DrawboardState, useDrawContext } from './contexts/DrawProvider'
+import { TextElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function TextEditor() {
@@ -22,7 +23,6 @@ export default function TextEditor() {
   const color = useWatchDrawing((state: DrawboardState) => state.color)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
   const [value, setValue] = useState('text')
-  // const locationMatrix = useValue(Skia.Matrix())
   const font = useFont(RobotoMedium, 24)
 
   const visible: ViewStyle =
@@ -51,32 +51,7 @@ export default function TextEditor() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1, width: '100%', position: 'relative' }}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            // if (!!font && value) {
-            //   const aa = Skia.Path.MakeFromText(value, 0, 0, font)
-            //   const width = (aa?.getBounds().width || 200) + 16
-            //   const dime = rect(
-            //     (canvasSize.width - width) / 2,
-            //     (canvasSize.height - 40) / 2,
-            //     width,
-            //     40
-            //   )
-            //   const e: DrawingElement = {
-            //     id: Math.random() + '',
-            //     type: 'text',
-            //     dimensions: dime,
-            //     matrix: Skia.Matrix(),
-            //     font: font,
-            //     text: value,
-            //     color: color
-            //   }
-            //   commands.addTextElement(e)
-            // }
-            // commands?.setMenu('text')
-            // setValue('')
-          }}
-        >
+        <TouchableWithoutFeedback onPress={() => {}}>
           <View
             style={{
               flex: 1
@@ -99,29 +74,46 @@ export default function TextEditor() {
                     justifyContent: 'center'
                   }}
                 >
-                  {/* <TextInput
+                  <TextInput
                     autoFocus
                     defaultValue=''
-                    onChangeText={t => {
-                      setValue(t)
+                    onEndEditing={() => {
+                      if (!!font && value) {
+                        const aa = Skia.Path.MakeFromText(value, 0, 0, font)
+                        const width = (aa?.getBounds().width || 200) + 16
+                        const dime = rect(
+                          (canvasSize.width - width) / 2,
+                          (canvasSize.height - 40) / 2,
+                          width,
+                          40
+                        )
+                        const textE: TextElement = {
+                          type: 'text',
+                          dimensions: dime,
+                          matrix: Skia.Matrix(),
+                          font: font,
+                          text: value,
+                          color: color
+                        }
+
+                        const { elements } = commands.getState()
+
+                        commands.setState({
+                          elements: [...elements, textE],
+                          menu: 'text'
+                        })
+                      }
                     }}
-                    value={value}
-                    onEndEditing={() => console.log('ssssssss')}
                     style={{
                       padding: 6,
-                      backgroundColor: color,
+                      backgroundColor: color as any,
                       marginHorizontal: 20,
                       fontSize: 24,
                       height: '100%',
                       borderRadius: 6,
-                      textAlign: 'center',
-                      textAlignVertical: 'center'
+                      textAlign: 'center'
                     }}
-                    onBlur={() => {}}
-                    onLayout={event => {
-                      var { x, y, width, height } = event.nativeEvent.layout
-                    }}
-                  /> */}
+                  />
                 </View>
               )}
             </View>

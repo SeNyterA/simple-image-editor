@@ -8,60 +8,50 @@ import {
   Text
 } from '@shopify/react-native-skia'
 import { memo } from 'react'
-import useWatchDrawing from '../hooks/useWatchDrawing'
+import { TextElement } from '../contexts/type'
 
-interface LocationStickerProps {
-  id: string
-}
-
-const TextItem = ({ id }: LocationStickerProps) => {
-  const textElement = useWatchDrawing(s =>
-    s.elements.find(e => e.type === 'text' && e.id === id)
-  )
-  if (textElement?.type === 'text')
-    return (
+const TextItem = ({ textElement }: { textElement: TextElement }) => {
+  return (
+    <Group
+      transform={[
+        { translateX: textElement.dimensions.x },
+        { translateY: textElement.dimensions.y }
+      ]}
+    >
       <Group
-        transform={[
-          { translateX: textElement.dimensions.x },
-          { translateY: textElement.dimensions.y }
-        ]}
+        matrix={textElement.matrix}
+        origin={{
+          x: textElement.dimensions.width / 2,
+          y: textElement.dimensions.height / 2
+        }}
       >
+        <RoundedRect
+          color={textElement.color}
+          rect={rrect(
+            rect(
+              0,
+              0,
+              textElement.dimensions.width,
+              textElement.dimensions.height
+            ),
+            6,
+            6
+          )}
+        />
         <Group
-          matrix={textElement.matrix}
-          origin={{
-            x: textElement.dimensions.width / 2,
-            y: textElement.dimensions.height / 2
-          }}
+          transform={[
+            { translateX: 8 },
+            {
+              translateY:
+                textElement.dimensions.height / 2 +
+                (textElement.dimensions.height - textElement.font.getSize()) / 2
+            }
+          ]}
         >
-          <RoundedRect
-            color={textElement.color}
-            rect={rrect(
-              rect(
-                0,
-                0,
-                textElement.dimensions.width,
-                textElement.dimensions.height
-              ),
-              6,
-              6
-            )}
-          />
-          <Group
-            transform={[
-              { translateX: 8 },
-              {
-                translateY:
-                  textElement.dimensions.height / 2 +
-                  (textElement.dimensions.height - textElement.font.getSize()) /
-                    2
-              }
-            ]}
-          >
-            <Text text={textElement.text || ''} font={textElement.font} />
-          </Group>
+          <Text text={textElement.text || ''} font={textElement.font} />
         </Group>
       </Group>
-    )
-  else return <></>
+    </Group>
+  )
 }
 export default memo(TextItem)

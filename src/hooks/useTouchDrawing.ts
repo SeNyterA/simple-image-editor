@@ -24,8 +24,6 @@ export const createPath = (
 
 export const useTouchDrawing = () => {
   const prevPointRef = useRef<SkPoint>()
-  // const stateRef = useRef<'create' | 'drawing'>('create')
-
   const drawContext = useDrawContext()
 
   return useTouchHandler({
@@ -33,9 +31,16 @@ export const useTouchDrawing = () => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          const { color, size, pathType, elements } = drawContext.state
-          elements.push(createPath(x, y, color as any, size, pathType))
-          drawContext.commands.notify()
+          const { color, size, pathType, elements } =
+            drawContext.commands.getState()
+
+          drawContext.commands.setState({
+            elements: [
+              ...elements,
+              createPath(x, y, color as any, size, pathType)
+            ]
+          })
+
           break
         }
         default:
@@ -74,9 +79,6 @@ export const useTouchDrawing = () => {
       switch (drawContext.state.menu) {
         case undefined:
         case 'drawing': {
-          // if (stateRef.current === 'create')
-          //   // drawContext.commands.removeElement(0)
-
           break
         }
         default:

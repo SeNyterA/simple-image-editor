@@ -7,15 +7,16 @@ import {
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import Share from 'react-native-share'
 import PathItem from './components/PathItem'
+import Test from './components/Test'
+import TextItem from './components/TextItem'
 import { useDrawContext } from './contexts/DrawProvider'
 import { GestureHandler } from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import { LocationSticker } from './LocationSticker'
 
 const { width, height } = Dimensions.get('window')
 
@@ -67,9 +68,7 @@ export default function DrawingBoard({
   )
   const context = useDrawContext()
 
-  const compactElements = useWatchDrawing(s =>
-    s.elements.map(e => ({ id: e.id, type: e.type }))
-  )
+  const compactElements = useWatchDrawing(s => s.elements)
 
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
@@ -133,31 +132,28 @@ export default function DrawingBoard({
               {compactElements.map((e, index) => {
                 switch (e.type) {
                   case 'path':
-                    return <PathItem id={e.id} key={index} />
+                    return <PathItem element={e} key={index} />
                   case 'text':
-                    return <LocationSticker id={e.id} key={index} />
+                    return <TextItem textElement={e} key={index} />
                   default:
                     return <></>
                 }
               })}
+              <Test />
             </Group>
           </Canvas>
         )}
 
-        {/* {compactElements.map((e, index) => {
+        {compactElements.map((e, index) => {
           switch (e.type) {
             case 'text':
               return (
-                <GestureHandler
-                  debug={true}
-                  index={index}
-                  key={e.id}
-                  id={e.id}
-                />
+                <GestureHandler key={index} index={index} textElement={e} />
               )
           }
-        })} */}
+        })}
       </View>
+      <Test />
     </View>
   )
 }
