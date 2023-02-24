@@ -38,6 +38,8 @@ export type DrawboardCommands = {
   getState: () => DrawboardState
   setState: (newState: Partial<DrawboardState>) => void
   notify: () => void
+  selectItem: (index: number) => void
+  deleteItems: () => void
 }
 
 export type DrawboardContextType = {
@@ -79,7 +81,23 @@ const createDrawProviderValue = (): DrawboardContextType => {
     notify: () => {
       notifyListeners(state)
     },
-    getState: () => state
+    getState: () => state,
+    selectItem: (index: number) => {
+      state.elements = state.elements.map((e, idx) =>
+        idx === index
+          ? {
+              ...e,
+              color: 'red',
+              selected: true
+            }
+          : e
+      )
+      notifyListeners(state)
+    },
+    deleteItems: () => {
+      state.elements = state.elements.filter((e, idx) => !e.selected)
+      notifyListeners(state)
+    }
   }
 
   return {

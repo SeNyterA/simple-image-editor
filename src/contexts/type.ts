@@ -9,6 +9,7 @@ export type DrawingElementType = 'path' | 'text'
 
 export type DrawingElement = {
   type: DrawingElementType
+  selected?: boolean
 } & (PathElement | TextElement)
 
 export type PathElement = {

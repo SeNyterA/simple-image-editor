@@ -27,6 +27,13 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
   const rotation = useSharedValue(0)
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
+  const selected = useSharedValue(false)
+
+  useSharedValueEffect(() => {
+    if (selected.value) {
+      context.commands.selectItem(index)
+    }
+  }, selected)
 
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
@@ -41,8 +48,6 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
           : e
       )
     })
-
-    context.commands.notify()
   }, matrix)
 
   const dragGesture = Gesture.Pan()
@@ -127,8 +132,10 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
     })
 
   const select = Gesture.Tap()
-    .numberOfTaps(1)
-    .onEnd(() => {})
+    .numberOfTaps(2)
+    .onEnd(() => {
+      selected.value = true
+    })
 
   const composed = Gesture.Race(
     select,

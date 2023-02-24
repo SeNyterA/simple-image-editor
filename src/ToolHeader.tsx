@@ -11,7 +11,7 @@ export default function ToolHeader({
   innerRef: React.RefObject<SkiaDomView>
 }) {
   const {
-    commands: { setState }
+    commands: { setState, deleteItems }
   } = useDrawContext()
 
   const menu = useWatchDrawing(s => s.menu)
@@ -47,7 +47,7 @@ export default function ToolHeader({
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.icon]}>
+      <TouchableOpacity style={[styles.icon]} onPress={() => deleteItems()}>
         <DeleteIcon width={20} height={20} fill='#FFF' />
       </TouchableOpacity>
 
