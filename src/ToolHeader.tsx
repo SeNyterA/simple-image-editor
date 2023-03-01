@@ -69,7 +69,9 @@ export default function ToolHeader({
         <SquareIcon width={20} height={20} fill='#ffffff' />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => setState({ menu: 'drawing' })}
+        onPress={() =>
+          setState({ menu: menu === 'drawing' ? 'default' : 'drawing' })
+        }
         style={[styles.icon, menu === 'drawing' && styles.active]}
       >
         <BrushPenIcon

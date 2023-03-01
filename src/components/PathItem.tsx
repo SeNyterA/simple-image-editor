@@ -2,12 +2,9 @@ import {
   DashPathEffect,
   DiscretePathEffect,
   Group,
-  Paint,
-  Path,
-  Rect
+  Path
 } from '@shopify/react-native-skia'
 import React, { memo } from 'react'
-
 import { PathElement } from '../contexts/type'
 
 const PathItem = ({ element }: { element: PathElement }) => {

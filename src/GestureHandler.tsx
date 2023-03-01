@@ -1,5 +1,5 @@
 import { Skia, SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   useAnimatedStyle,
@@ -26,6 +26,10 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
   const menu = useWatchDrawing(s => s.menu)
+
+  useEffect(() => {
+    console.log(index, 'ssss', menu)
+  }, [menu])
 
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
@@ -135,22 +139,24 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
     )
   )
 
-  const style = useAnimatedStyle(() => ({
-    position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
-    backgroundColor: debug ? 'rgba(100, 200, 300, 0.4)' : 'transparent',
-    transform: [
-      { translateX: offset.value.x },
-      { translateY: offset.value.y },
-      { scale: scale.value },
-      { rotateZ: `${rotation.value}rad` }
-    ]
-  }))
-
-  if (menu === 'drawing') return <></>
+  const style = useAnimatedStyle(() =>
+    menu === 'drawing'
+      ? { position: 'absolute' }
+      : {
+          position: 'absolute',
+          left: x,
+          top: y,
+          width,
+          height,
+          backgroundColor: debug ? 'rgba(100, 200, 300, 0.4)' : 'transparent',
+          transform: [
+            { translateX: offset.value.x },
+            { translateY: offset.value.y },
+            { scale: scale.value },
+            { rotateZ: `${rotation.value}rad` }
+          ]
+        }
+  )
 
   return (
     <GestureDetector gesture={composed} userSelect='text'>
@@ -158,7 +164,6 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
         style={style}
         onTouchEnd={() => {
           context.commands.selectItem(index)
-          context.commands.setState({ menu: 'default' })
         }}
       />
     </GestureDetector>
