@@ -132,7 +132,7 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
     })
 
   const select = Gesture.Tap()
-    .numberOfTaps(2)
+    .numberOfTaps(1)
     .onEnd(() => {
       selected.value = true
     })

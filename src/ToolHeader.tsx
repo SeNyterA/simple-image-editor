@@ -1,8 +1,9 @@
-import { SkiaDomView } from '@shopify/react-native-skia'
+import { rect, Skia, SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { BrushPenIcon, DeleteIcon, FontIcon } from './assets'
 import { useDrawContext } from './contexts/DrawProvider'
+import { CircleElement, RectElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
@@ -11,10 +12,59 @@ export default function ToolHeader({
   innerRef: React.RefObject<SkiaDomView>
 }) {
   const {
-    commands: { setState, deleteItems }
+    commands: { setState, deleteSelectedItem, getState }
   } = useDrawContext()
 
   const menu = useWatchDrawing(s => s.menu)
+  const canvasSize = useWatchDrawing(s => s.canvasSize)
+
+  const addCricle = () => {
+    const size = 100
+    const dime = rect(
+      (canvasSize.width - size) / 2,
+      (canvasSize.height - size) / 2,
+      size,
+      size
+    )
+
+    const e: CircleElement = {
+      type: 'circle',
+      dimensions: dime,
+      matrix: Skia.Matrix(),
+      color: getState().color,
+      size: 1
+    }
+
+    const { elements } = getState()
+    setState({
+      elements: [...elements, e],
+      menu: 'text'
+    })
+  }
+
+  const addRect = () => {
+    const size = 100
+    const dime = rect(
+      (canvasSize.width - size) / 2,
+      (canvasSize.height - size) / 2,
+      size,
+      size
+    )
+
+    const e: RectElement = {
+      type: 'rect',
+      dimensions: dime,
+      matrix: Skia.Matrix(),
+      color: getState().color,
+      size: 1
+    }
+
+    const { elements } = getState()
+    setState({
+      elements: [...elements, e],
+      menu: 'text'
+    })
+  }
 
   return (
     <View
@@ -26,6 +76,12 @@ export default function ToolHeader({
         padding: 10
       }}
     >
+      <TouchableOpacity onPress={() => addCricle()} style={[styles.icon]}>
+        <BrushPenIcon width={20} height={20} fill='#ffffff' />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => addRect()} style={[styles.icon]}>
+        <BrushPenIcon width={20} height={20} fill='#ffffff' />
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setState({ menu: 'drawing' })}
         style={[styles.icon, menu === 'drawing' && styles.active]}
@@ -47,7 +103,10 @@ export default function ToolHeader({
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.icon]} onPress={() => deleteItems()}>
+      <TouchableOpacity
+        style={[styles.icon]}
+        onPress={() => deleteSelectedItem()}
+      >
         <DeleteIcon width={20} height={20} fill='#FFF' />
       </TouchableOpacity>
 

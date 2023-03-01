@@ -14,6 +14,7 @@ export type ToobarMemu =
   | 'delete'
   | 'addText'
   | 'editText'
+  | 'addCircle'
 
 export type ToolbarMode = 'export' | 'edit'
 
@@ -39,7 +40,7 @@ export type DrawboardCommands = {
   setState: (newState: Partial<DrawboardState>) => void
   notify: () => void
   selectItem: (index: number) => void
-  deleteItems: () => void
+  deleteSelectedItem: () => void
 }
 
 export type DrawboardContextType = {
@@ -87,14 +88,13 @@ const createDrawProviderValue = (): DrawboardContextType => {
         idx === index
           ? {
               ...e,
-              color: 'red',
               selected: true
             }
           : e
       )
       notifyListeners(state)
     },
-    deleteItems: () => {
+    deleteSelectedItem: () => {
       state.elements = state.elements.filter((e, idx) => !e.selected)
       notifyListeners(state)
     }

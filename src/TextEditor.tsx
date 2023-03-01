@@ -87,6 +87,7 @@ export default function TextEditor() {
                           width,
                           40
                         )
+
                         const textE: TextElement = {
                           type: 'text',
                           dimensions: dime,

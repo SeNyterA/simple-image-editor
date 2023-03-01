@@ -10,8 +10,9 @@ import {
 import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import Share from 'react-native-share'
-import { CircleItem, RectItem } from './components/DemoCircle'
+import { CircleItem } from './components/CircleItem'
 import PathItem from './components/PathItem'
+import { RectItem } from './components/RectItem'
 import Test from './components/Test'
 import TextItem from './components/TextItem'
 import { useDrawContext } from './contexts/DrawProvider'
@@ -137,12 +138,12 @@ export default function DrawingBoard({
                     return <PathItem element={e} key={index} />
                   case 'text':
                     return <TextItem textElement={e} key={index} />
-                  default:
-                    return <></>
+                  case 'circle':
+                    return <CircleItem element={e} key={index} />
+                  case 'rect':
+                    return <RectItem element={e} key={index} />
                 }
               })}
-              <CircleItem />
-              <RectItem />
             </Group>
           </Canvas>
         )}
@@ -150,7 +151,11 @@ export default function DrawingBoard({
         {compactElements.map((e, index) => {
           switch (e.type) {
             case 'text':
-              return <GestureHandler key={index} index={index} />
+              return <GestureHandler key={index} index={index} debug={true} />
+            case 'circle':
+              return <GestureHandler key={index} index={index} debug={true} />
+            case 'rect':
+              return <GestureHandler key={index} index={index} debug={true} />
           }
         })}
       </View>

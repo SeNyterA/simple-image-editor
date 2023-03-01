@@ -5,12 +5,11 @@ import {
 } from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 
 export type PathType = 'normal' | 'dashed' | 'discreted'
-export type DrawingElementType = 'path' | 'text'
+export type DrawingElementType = 'path' | 'text' | 'circle' | 'rect'
 
 export type DrawingElement = {
   type: DrawingElementType
-  selected?: boolean
-} & (PathElement | TextElement)
+} & (PathElement | TextElement | CircleElement | RectElement)
 
 export type PathElement = {
   type: 'path'
@@ -18,6 +17,7 @@ export type PathElement = {
   pathType: PathType
   size: number
   path: SkPath
+  selected?: boolean
 }
 
 export type TextElement = {
@@ -27,4 +27,23 @@ export type TextElement = {
   font: SkFont
   matrix: SkMatrix
   color: Color
+  selected?: boolean
+}
+
+export type CircleElement = {
+  type: 'circle'
+  dimensions: SkRect
+  matrix: SkMatrix
+  color: Color
+  selected?: boolean
+  size: number
+}
+
+export type RectElement = {
+  type: 'rect'
+  dimensions: SkRect
+  matrix: SkMatrix
+  color: Color
+  selected?: boolean
+  size: number
 }
