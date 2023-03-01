@@ -27,6 +27,21 @@ export const RectItem = ({ element }: { element: ShapeElement }) => {
             strokeWidth={strokeWidth}
           />
         </Rect>
+
+        <Group
+          transform={[
+            { translateX: width / 2 - 2 },
+            { translateY: height / 2 - 2 }
+          ]}
+        >
+          <Rect width={3} height={3} transform={[]} color='#0000'>
+            <Paint
+              color={element.color}
+              style='stroke'
+              strokeWidth={strokeWidth}
+            />
+          </Rect>
+        </Group>
       </Group>
     </Group>
   )

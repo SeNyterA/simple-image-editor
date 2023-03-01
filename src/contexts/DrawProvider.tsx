@@ -82,7 +82,7 @@ const createDrawProviderValue = (): DrawboardContextType => {
         idx === index
           ? {
               ...e,
-              selected: true
+              selected: !e.selected
             }
           : e
       )

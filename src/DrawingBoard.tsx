@@ -146,22 +146,14 @@ export default function DrawingBoard({
           </Canvas>
         )}
 
-        {compactElements.map((e, index) => {
-          switch (e.type) {
-            case 'text':
-              return (
-                <GestureHandler key={index} index={index} debug={e.selected} />
-              )
-            case 'circle':
-              return (
-                <GestureHandler key={index} index={index} debug={e.selected} />
-              )
-            case 'rect':
-              return (
-                <GestureHandler key={index} index={index} debug={e.selected} />
-              )
-          }
-        })}
+        {compactElements.map((e, index) => (
+          <GestureHandler
+            key={index}
+            index={index}
+            debug={e.selected}
+            dimensions={e.dimensions}
+          />
+        ))}
       </View>
       <Test />
     </View>

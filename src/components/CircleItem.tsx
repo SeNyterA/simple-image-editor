@@ -21,12 +21,6 @@ export const CircleItem = ({ element }: { element: ShapeElement }) => {
           y: height / 2
         }}
       >
-        {/* {element.selected && (
-          <Rect width={width} height={height} color='#0000'>
-            <Paint color='#066fbf' style='stroke' strokeWidth={1} />
-          </Rect>
-        )} */}
-
         <Circle c={c} r={r} color='#0000'>
           <Paint
             color={element.color}

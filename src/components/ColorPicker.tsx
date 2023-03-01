@@ -16,7 +16,6 @@ const colors = [
 
 export default function ColorPicker() {
   const color = useWatchDrawing(state => state.color)
-
   const {
     commands: { setState, getState }
   } = useDrawContext()
