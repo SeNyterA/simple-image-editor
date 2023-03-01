@@ -1,5 +1,5 @@
 import { rect, Skia, useFont } from '@shopify/react-native-skia'
-import React, { useState } from 'react'
+import React from 'react'
 import {
   KeyboardAvoidingView,
   Platform,
@@ -22,7 +22,6 @@ export default function TextEditor() {
   const menu = useWatchDrawing((state: DrawboardState) => state.menu)
   const color = useWatchDrawing((state: DrawboardState) => state.color)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
-  const [value, setValue] = useState('khang dep')
   const font = useFont(RobotoMedium, 24)
 
   const visible: ViewStyle =
@@ -77,9 +76,9 @@ export default function TextEditor() {
                   <TextInput
                     autoFocus
                     defaultValue=''
-                    onEndEditing={() => {
-                      if (!!font && value) {
-                        const aa = Skia.Path.MakeFromText(value, 0, 0, font)
+                    onEndEditing={({ nativeEvent: { text } }) => {
+                      if (!!font && text) {
+                        const aa = Skia.Path.MakeFromText(text, 0, 0, font)
                         const width = (aa?.getBounds().width || 200) + 16
                         const dime = rect(
                           (canvasSize.width - width) / 2,
@@ -93,7 +92,7 @@ export default function TextEditor() {
                           dimensions: dime,
                           matrix: Skia.Matrix(),
                           font: font,
-                          text: value,
+                          text: text,
                           color: color
                         }
 
@@ -101,10 +100,11 @@ export default function TextEditor() {
 
                         commands.setState({
                           elements: [...elements, textE],
-                          menu: 'text'
+                          menu: 'default'
                         })
                       }
                     }}
+                    onBlur={e => e.nativeEvent.text}
                     style={{
                       padding: 6,
                       backgroundColor: color as any,

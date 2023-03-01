@@ -17,10 +17,8 @@ import Test from './components/Test'
 import TextItem from './components/TextItem'
 import { useDrawContext } from './contexts/DrawProvider'
 import GestureHandler from './GestureHandler'
-
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
-
 const { width, height } = Dimensions.get('window')
 
 const getRectImage = ({
@@ -151,11 +149,17 @@ export default function DrawingBoard({
         {compactElements.map((e, index) => {
           switch (e.type) {
             case 'text':
-              return <GestureHandler key={index} index={index} debug={true} />
+              return (
+                <GestureHandler key={index} index={index} debug={e.selected} />
+              )
             case 'circle':
-              return <GestureHandler key={index} index={index} debug={true} />
+              return (
+                <GestureHandler key={index} index={index} debug={e.selected} />
+              )
             case 'rect':
-              return <GestureHandler key={index} index={index} debug={true} />
+              return (
+                <GestureHandler key={index} index={index} debug={e.selected} />
+              )
           }
         })}
       </View>

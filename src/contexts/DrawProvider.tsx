@@ -6,15 +6,9 @@ import { DrawingElement, PathType } from './type'
 
 export type ToobarMemu =
   | 'drawing'
-  | 'chooseSticker'
-  | 'selection'
-  | 'colors'
-  | 'text'
-  | 'save'
-  | 'delete'
   | 'addText'
   | 'editText'
-  | 'addCircle'
+  | 'default'
 
 export type ToolbarMode = 'export' | 'edit'
 

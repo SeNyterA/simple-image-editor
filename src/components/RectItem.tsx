@@ -23,10 +23,12 @@ export const RectItem = ({ element }: Props) => {
           y: height / 2
         }}
       >
-        {/* <Paint color={element.color} style='stroke' strokeWidth={strokeWidth} /> */}
-
-        <Rect width={width} height={height} blendMode={'color'}>
-          <Paint color='#f3efef' style='stroke' strokeWidth={strokeWidth} />
+        <Rect width={width} height={height} color='#0000'>
+          <Paint
+            color={element.color}
+            style='stroke'
+            strokeWidth={strokeWidth}
+          />
         </Rect>
       </Group>
     </Group>

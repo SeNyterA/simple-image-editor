@@ -15,7 +15,6 @@ interface GestureHandlerProps {
 }
 
 const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
-  console.log('render ', index)
   const context = useDrawContext()
   const { x, y, width, height } = (
     context.commands.getState().elements[index] as TextElement
@@ -27,13 +26,6 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
   const rotation = useSharedValue(0)
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
-  const selected = useSharedValue(false)
-
-  useSharedValueEffect(() => {
-    if (selected.value) {
-      context.commands.selectItem(index)
-    }
-  }, selected)
 
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
@@ -133,9 +125,7 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
 
   const select = Gesture.Tap()
     .numberOfTaps(1)
-    .onEnd(() => {
-      selected.value = true
-    })
+    .onEnd(() => {})
 
   const composed = Gesture.Race(
     select,
@@ -161,8 +151,13 @@ const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
   }))
 
   return (
-    <GestureDetector gesture={composed}>
-      <Animated.View style={style}></Animated.View>
+    <GestureDetector gesture={composed} userSelect='text'>
+      <Animated.View
+        style={style}
+        onTouchEnd={() => {
+          !debug && context.commands.selectItem(index)
+        }}
+      />
     </GestureDetector>
   )
 }

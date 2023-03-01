@@ -1,5 +1,5 @@
 import { Circle, Group, Paint, vec } from '@shopify/react-native-skia'
-import { CircleElement, RectElement } from '../contexts/type'
+import { CircleElement } from '../contexts/type'
 
 interface Props {
   element: CircleElement

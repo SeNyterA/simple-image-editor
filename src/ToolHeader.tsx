@@ -1,7 +1,7 @@
 import { rect, Skia, SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { BrushPenIcon, DeleteIcon, FontIcon } from './assets'
+import { BrushPenIcon, CircleIcon, DeleteIcon, FontIcon, SquareIcon } from './assets'
 import { useDrawContext } from './contexts/DrawProvider'
 import { CircleElement, RectElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
@@ -38,7 +38,7 @@ export default function ToolHeader({
     const { elements } = getState()
     setState({
       elements: [...elements, e],
-      menu: 'text'
+      menu: 'default'
     })
   }
 
@@ -62,7 +62,7 @@ export default function ToolHeader({
     const { elements } = getState()
     setState({
       elements: [...elements, e],
-      menu: 'text'
+      menu: 'default'
     })
   }
 
@@ -77,10 +77,10 @@ export default function ToolHeader({
       }}
     >
       <TouchableOpacity onPress={() => addCricle()} style={[styles.icon]}>
-        <BrushPenIcon width={20} height={20} fill='#ffffff' />
+        <CircleIcon width={20} height={20} fill='#ffffff' />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => addRect()} style={[styles.icon]}>
-        <BrushPenIcon width={20} height={20} fill='#ffffff' />
+        <SquareIcon width={20} height={20} fill='#ffffff' />
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setState({ menu: 'drawing' })}
@@ -94,13 +94,9 @@ export default function ToolHeader({
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setState({ menu: 'addText' })}
-        style={[styles.icon, menu === 'text' && styles.active]}
+        style={[styles.icon]}
       >
-        <FontIcon
-          width={20}
-          height={20}
-          fill={`${menu === 'text' ? '#333' : '#FFF'}`}
-        />
+        <FontIcon width={20} height={20} fill='#FFF' />
       </TouchableOpacity>
 
       <TouchableOpacity

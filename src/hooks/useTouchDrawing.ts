@@ -29,7 +29,6 @@ export const useTouchDrawing = () => {
   return useTouchHandler({
     onStart: ({ x, y }) => {
       switch (drawContext.state.menu) {
-        case undefined:
         case 'drawing': {
           const { color, size, pathType, elements } =
             drawContext.commands.getState()
@@ -40,7 +39,13 @@ export const useTouchDrawing = () => {
               createPath(x, y, color as any, size, pathType)
             ]
           })
-
+          break
+        }
+        case 'default': {
+          const { elements } = drawContext.commands.getState()
+          drawContext.commands.setState({
+            elements: elements.map(e => ({ ...e, selected: false }))
+          })
           break
         }
         default:
@@ -50,7 +55,6 @@ export const useTouchDrawing = () => {
     },
     onActive: ({ x, y }) => {
       switch (drawContext.state.menu) {
-        case undefined:
         case 'drawing': {
           if (drawContext.state.elements.length) {
             const element =
@@ -77,10 +81,6 @@ export const useTouchDrawing = () => {
     },
     onEnd: () => {
       switch (drawContext.state.menu) {
-        case undefined:
-        case 'drawing': {
-          break
-        }
         default:
           break
       }

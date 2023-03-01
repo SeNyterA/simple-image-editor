@@ -18,14 +18,13 @@ export default function ColorPicker() {
   const color = useWatchDrawing(state => state.color)
 
   const {
-    commands: { setState }
+    commands: { setState, getState }
   } = useDrawContext()
   return (
     <View style={{ flexDirection: 'row', flex: 1 }}>
       <ScrollView
         horizontal
         contentContainerStyle={{
-          //   justifyContent: 'center',
           alignItems: 'center'
         }}
         style={{ height: 50 }}
@@ -34,7 +33,15 @@ export default function ColorPicker() {
           <Fragment key={index}>
             <TouchableOpacity
               style={[styles.icon, c === color && styles.active]}
-              onPress={() => setState({ color: c })}
+              onPress={() =>
+                setState({
+                  color: c,
+                  elements: getState().elements.map(e => ({
+                    ...e,
+                    color: e.selected ? c : e.color
+                  }))
+                })
+              }
             >
               <View
                 style={{
