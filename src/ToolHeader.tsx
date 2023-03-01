@@ -1,9 +1,16 @@
 import { rect, Skia, SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { BrushPenIcon, CircleIcon, DeleteIcon, FontIcon, SquareIcon } from './assets'
+import {
+  BrushPenIcon,
+  CircleIcon,
+  DeleteIcon,
+  FontIcon,
+  SquareIcon
+} from './assets'
 import { useDrawContext } from './contexts/DrawProvider'
-import { CircleElement, RectElement } from './contexts/type'
+import { ShapeElement } from './contexts/type'
+
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
@@ -18,7 +25,7 @@ export default function ToolHeader({
   const menu = useWatchDrawing(s => s.menu)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
 
-  const addCricle = () => {
+  const addShape = (type: 'circle' | 'rect') => {
     const size = 100
     const dime = rect(
       (canvasSize.width - size) / 2,
@@ -27,32 +34,8 @@ export default function ToolHeader({
       size
     )
 
-    const e: CircleElement = {
-      type: 'circle',
-      dimensions: dime,
-      matrix: Skia.Matrix(),
-      color: getState().color,
-      size: 1
-    }
-
-    const { elements } = getState()
-    setState({
-      elements: [...elements, e],
-      menu: 'default'
-    })
-  }
-
-  const addRect = () => {
-    const size = 100
-    const dime = rect(
-      (canvasSize.width - size) / 2,
-      (canvasSize.height - size) / 2,
-      size,
-      size
-    )
-
-    const e: RectElement = {
-      type: 'rect',
+    const e: ShapeElement = {
+      type: type,
       dimensions: dime,
       matrix: Skia.Matrix(),
       color: getState().color,
@@ -76,10 +59,13 @@ export default function ToolHeader({
         padding: 10
       }}
     >
-      <TouchableOpacity onPress={() => addCricle()} style={[styles.icon]}>
+      <TouchableOpacity
+        onPress={() => addShape('circle')}
+        style={[styles.icon]}
+      >
         <CircleIcon width={20} height={20} fill='#ffffff' />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => addRect()} style={[styles.icon]}>
+      <TouchableOpacity onPress={() => addShape('rect')} style={[styles.icon]}>
         <SquareIcon width={20} height={20} fill='#ffffff' />
       </TouchableOpacity>
       <TouchableOpacity

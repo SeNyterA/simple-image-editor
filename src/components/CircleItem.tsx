@@ -1,10 +1,7 @@
 import { Circle, Group, Paint, vec } from '@shopify/react-native-skia'
-import { CircleElement } from '../contexts/type'
+import { ShapeElement } from '../contexts/type'
 
-interface Props {
-  element: CircleElement
-}
-export const CircleItem = ({ element }: Props) => {
+export const CircleItem = ({ element }: { element: ShapeElement }) => {
   const width = element.dimensions.width
   const height = element.dimensions.height
   const strokeWidth = element.size

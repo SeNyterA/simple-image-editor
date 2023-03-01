@@ -1,10 +1,7 @@
 import { Group, Paint, Rect } from '@shopify/react-native-skia'
-import { RectElement } from '../contexts/type'
+import { ShapeElement } from '../contexts/type'
 
-interface Props {
-  element: RectElement
-}
-export const RectItem = ({ element }: Props) => {
+export const RectItem = ({ element }: { element: ShapeElement }) => {
   const width = element.dimensions.width
   const height = element.dimensions.height
   const strokeWidth = element.size

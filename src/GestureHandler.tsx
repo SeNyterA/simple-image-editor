@@ -7,7 +7,6 @@ import Animated, {
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
 import { useDrawContext } from './contexts/DrawProvider'
-import { TextElement } from './contexts/type'
 
 interface GestureHandlerProps {
   debug?: boolean
@@ -16,9 +15,8 @@ interface GestureHandlerProps {
 
 const GestureHandler = ({ debug, index }: GestureHandlerProps) => {
   const context = useDrawContext()
-  const { x, y, width, height } = (
-    context.commands.getState().elements[index] as TextElement
-  ).dimensions
+  const { x, y, width, height } =
+    context.commands.getState().elements[index].dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
   const start = useSharedValue({ x: 0, y: 0 })
   const scale = useSharedValue(1)

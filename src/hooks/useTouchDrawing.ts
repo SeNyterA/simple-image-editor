@@ -81,6 +81,36 @@ export const useTouchDrawing = () => {
     },
     onEnd: () => {
       switch (drawContext.state.menu) {
+        case 'drawing':
+          if (drawContext.state.elements.length) {
+            const element =
+              drawContext.state.elements[drawContext.state.elements.length - 1]
+
+            if (element.type === 'path') {
+              // const aa = Skia.Path.MakeFromText(text, 0, 0, font)
+              // const width = (aa?.getBounds().width || 200) + 16
+              // const dime = rect(
+              //   (canvasSize.width - width) / 2,
+              //   (canvasSize.height - 40) / 2,
+              //   width,
+              //   40
+              // )
+
+              // const xMid = (prevPointRef.current!.x + x) / 2
+              // const yMid = (prevPointRef.current!.y + y) / 2
+
+              // element.path.quadTo(
+              //   prevPointRef.current!.x,
+              //   prevPointRef.current!.y,
+              //   xMid,
+              //   yMid
+              // )
+
+              console.log(element.path.getBounds())
+            }
+          }
+
+          break
         default:
           break
       }

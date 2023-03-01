@@ -9,41 +9,34 @@ export type DrawingElementType = 'path' | 'text' | 'circle' | 'rect'
 
 export type DrawingElement = {
   type: DrawingElementType
-} & (PathElement | TextElement | CircleElement | RectElement)
+} & (TextElement | PathElement | ShapeElement)
+
+export type TextElement = {
+  type: 'text'
+  color: Color
+  matrix: SkMatrix
+  dimensions: SkRect
+  selected?: boolean
+  text: string
+  font: SkFont
+}
 
 export type PathElement = {
   type: 'path'
   color: Color
+  matrix: SkMatrix
+  dimensions: SkRect
+  selected?: boolean
   pathType: PathType
   size: number
   path: SkPath
-  selected?: boolean
 }
 
-export type TextElement = {
-  type: 'text'
-  dimensions: SkRect
-  text: string
-  font: SkFont
-  matrix: SkMatrix
+export type ShapeElement = {
+  type: 'rect' | 'circle'
   color: Color
-  selected?: boolean
-}
-
-export type CircleElement = {
-  type: 'circle'
-  dimensions: SkRect
   matrix: SkMatrix
-  color: Color
-  selected?: boolean
-  size: number
-}
-
-export type RectElement = {
-  type: 'rect'
   dimensions: SkRect
-  matrix: SkMatrix
-  color: Color
   selected?: boolean
   size: number
 }
