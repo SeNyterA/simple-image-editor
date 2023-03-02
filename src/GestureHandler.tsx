@@ -158,7 +158,7 @@ const GestureHandler = ({
   return (
     <GestureDetector gesture={composed} userSelect='text'>
       <Animated.View
-        style={style}
+        style={[style, { zIndex: menu === 'drawing' ? -10 : 10 }]}
         onTouchEnd={() => {
           context.commands.selectItem(index)
         }}
