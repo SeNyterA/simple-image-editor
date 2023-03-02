@@ -2,14 +2,14 @@ import {
   Canvas,
   Group,
   Image,
-  ImageFormat,
   SkiaDomView,
+  SkImage,
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
 import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
-import Share from 'react-native-share'
+import { PhotoFile } from 'react-native-vision-camera'
 import { CircleItem } from './components/CircleItem'
 import PathItem from './components/PathItem'
 import { RectItem } from './components/RectItem'
@@ -20,6 +20,10 @@ import GestureHandler from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
 const { width, height } = Dimensions.get('window')
+
+type Image = PhotoFile & {
+  image: SkImage | null
+}
 
 const getRectImage = ({
   imgW,
@@ -54,44 +58,26 @@ const getRectImage = ({
 }
 
 export default function DrawingBoard({
-  innerRef
+  innerRef,
+  baseURL
 }: {
   innerRef: React.RefObject<SkiaDomView>
+  baseURL: string
 }) {
   const [canvasSize, setCanvasSize] = useState({
     width: width,
     height: height - 50
   })
-
-  const touchHandler = useTouchDrawing()
-  const image = useImage(
-    'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
-  )
   const context = useDrawContext()
-
+  const touchHandler = useTouchDrawing()
   const compactElements = useWatchDrawing(s => s.elements)
-
+  const image = useImage(`file://${baseURL}`)
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
     canvasW: canvasSize.width,
     imgH: image?.height(),
     imgW: image?.width()
   })
-
-  const share = async () => {
-    const image = innerRef.current?.makeImageSnapshot()
-    if (image) {
-      const data = image.encodeToBase64(ImageFormat.PNG, 100)
-      const url = `data:image/png;base64,${data}`
-      const shareOptions = {
-        title: 'Sharing image from awesome drawing app',
-        message: 'My drawing',
-        url,
-        failOnCancel: false
-      }
-      await Share.open(shareOptions)
-    }
-  }
 
   return (
     <View

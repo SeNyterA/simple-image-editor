@@ -14,9 +14,11 @@ import { ShapeElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
-  innerRef
+  innerRef,
+  exportImage
 }: {
   innerRef: React.RefObject<SkiaDomView>
+  exportImage: () => void
 }) {
   const {
     commands: { setState, deleteSelectedItem, getState }
@@ -94,7 +96,7 @@ export default function ToolHeader({
         <DeleteIcon width={20} height={20} fill='#FFF' />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={() => exportImage()}>
         <Text
           style={{
             color: '#fff',
