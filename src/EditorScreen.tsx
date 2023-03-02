@@ -1,13 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 import { ImageFormat, useCanvasRef } from '@shopify/react-native-skia'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { SafeAreaView, StatusBar, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import Share from 'react-native-share'
 import ContentArea from './ContentArea'
 import { useDrawProvider } from './contexts/DrawProvider'
 import TextEditor from './TextEditor'
 import ToolHeader from './ToolHeader'
-import Share from 'react-native-share'
 
 export default function EditorScreen() {
   const DrawProvider = useDrawProvider()
@@ -28,35 +28,24 @@ export default function EditorScreen() {
     }
   }
 
-  const renderDrawingBoard = useMemo(
-    () => (
-      <DrawProvider>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: '#111',
-            borderRadius: 20,
-            overflow: 'hidden'
-          }}
-        >
-          <ToolHeader innerRef={skiaViewRef} exportImage={share} />
-
-          <ContentArea innerRef={skiaViewRef} />
-
-          <View style={{ height: 60, padding: 10 }}></View>
-        </View>
-
-        <TextEditor />
-      </DrawProvider>
-    ),
-    []
-  )
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[{ flex: 1, backgroundColor: '#000000' }]}>
         <StatusBar barStyle='light-content' />
-        {renderDrawingBoard}
+        <DrawProvider>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: '#000000',
+              overflow: 'hidden'
+            }}
+          >
+            <ToolHeader innerRef={skiaViewRef} exportImage={share} />
+            <ContentArea innerRef={skiaViewRef} />
+          </View>
+
+          <TextEditor />
+        </DrawProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   )

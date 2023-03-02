@@ -8,7 +8,7 @@ export default function TextTool() {
   return (
     <View
       style={{
-        height: 60,
+        height: 50,
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 12,

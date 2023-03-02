@@ -6,7 +6,7 @@ import { DrawingElement, PathType } from './type'
 
 export type ToobarMemu = 'drawing' | 'addText' | 'editText' | 'default'
 
-export type ToolbarMode = 'export' | 'edit'
+export type ToolbarMode = 'takePhoto' | 'edit'
 
 export type CanvasSizeType = {
   width: number
@@ -48,8 +48,8 @@ const { width, height } = Dimensions.get('window')
 const createDrawProviderValue = (): DrawboardContextType => {
   const state: DrawboardState = {
     baseURL: undefined,
-    menu: 'drawing',
-    mode: 'edit',
+    menu: 'default',
+    mode: 'takePhoto',
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',

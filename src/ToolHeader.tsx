@@ -58,7 +58,12 @@ export default function ToolHeader({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        padding: 10
+        padding: 10,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        left: 0,
+        zIndex: 10
       }}
     >
       <TouchableOpacity
@@ -119,7 +124,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 6,
-    marginRight: 10
+    marginRight: 10,
+    backgroundColor: '#fff5'
   },
   active: {
     backgroundColor: '#fff'

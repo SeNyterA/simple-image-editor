@@ -13,7 +13,6 @@ import { PhotoFile } from 'react-native-vision-camera'
 import { CircleItem } from './components/CircleItem'
 import PathItem from './components/PathItem'
 import { RectItem } from './components/RectItem'
-import Test from './components/Test'
 import TextItem from './components/TextItem'
 import { useDrawContext } from './contexts/DrawProvider'
 import GestureHandler from './GestureHandler'
@@ -80,68 +79,73 @@ export default function DrawingBoard({
   })
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-      onLayout={event => {
-        var { width, height } = event.nativeEvent.layout
-        setCanvasSize({
-          width,
-          height
-        })
-      }}
-    >
-      <View style={{ overflow: 'hidden', borderRadius: 10 }}>
-        {!!imgRect && (
-          <Canvas
-            onTouch={touchHandler}
-            style={{
-              ...imgRect
-            }}
-            ref={innerRef}
-            onLayout={event => {
-              var { width, height } = event.nativeEvent.layout
-              context.commands.setState({
-                canvasSize: {
-                  width,
-                  height
-                }
-              })
-            }}
-          >
-            <Group
-            // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+    <>
+      <View
+        style={{
+          flex: 1,
+          borderRadius: 20,
+          overflow: 'hidden',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff3'
+        }}
+        onLayout={event => {
+          var { width, height } = event.nativeEvent.layout
+          setCanvasSize({
+            width,
+            height
+          })
+        }}
+      >
+        <View>
+          {!!imgRect && (
+            <Canvas
+              onTouch={touchHandler}
+              style={{
+                ...imgRect
+              }}
+              ref={innerRef}
+              onLayout={event => {
+                var { width, height } = event.nativeEvent.layout
+                context.commands.setState({
+                  canvasSize: {
+                    width,
+                    height
+                  }
+                })
+              }}
             >
-              {!!image && <Image image={image} fit='contain' {...imgRect} />}
-              {compactElements.map((e, index) => {
-                switch (e.type) {
-                  case 'path':
-                    return <PathItem element={e} key={index} />
-                  case 'text':
-                    return <TextItem textElement={e} key={index} />
-                  case 'circle':
-                    return <CircleItem element={e} key={index} />
-                  case 'rect':
-                    return <RectItem element={e} key={index} />
-                }
-              })}
-            </Group>
-          </Canvas>
-        )}
+              <Group
+              // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+              >
+                {!!image && <Image image={image} fit='contain' {...imgRect} />}
+                {compactElements.map((e, index) => {
+                  switch (e.type) {
+                    case 'path':
+                      return <PathItem element={e} key={index} />
+                    case 'text':
+                      return <TextItem textElement={e} key={index} />
+                    case 'circle':
+                      return <CircleItem element={e} key={index} />
+                    case 'rect':
+                      return <RectItem element={e} key={index} />
+                  }
+                })}
+              </Group>
+            </Canvas>
+          )}
 
-        {compactElements.map((e, index) => (
-          <GestureHandler
-            key={index}
-            index={index}
-            debug={e.selected}
-            dimensions={e.dimensions}
-          />
-        ))}
+          {compactElements.map((e, index) => (
+            <GestureHandler
+              key={index}
+              index={index}
+              debug={e.selected}
+              dimensions={e.dimensions}
+            />
+          ))}
+        </View>
       </View>
-      <Test />
-    </View>
+      <View style={{ height: 50, padding: 10 }} />
+    </>
   )
 }

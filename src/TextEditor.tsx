@@ -12,15 +12,16 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RobotoMedium } from './assets/fonts'
 import TextTool from './components/TextTool'
-import { DrawboardState, useDrawContext } from './contexts/DrawProvider'
+import { useDrawContext } from './contexts/DrawProvider'
 import { TextElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function TextEditor() {
   const { commands } = useDrawContext()
   const insets = useSafeAreaInsets()
-  const menu = useWatchDrawing((state: DrawboardState) => state.menu)
-  const color = useWatchDrawing((state: DrawboardState) => state.color)
+  const menu = useWatchDrawing(state => state.menu)
+  const color = useWatchDrawing(state => state.color)
+  const baseURL = useWatchDrawing(state => state.baseURL)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
   const font = useFont(RobotoMedium, 24)
 
@@ -118,7 +119,8 @@ export default function TextEditor() {
                 </View>
               )}
             </View>
-            <TextTool />
+
+            {baseURL && <TextTool />}
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
