@@ -24,8 +24,9 @@ export default function ToolHeader({
     commands: { setState, deleteSelectedItem, getState }
   } = useDrawContext()
 
-  const menu = useWatchDrawing(s => s.menu)
+  const baseURL = useWatchDrawing(s => s.baseURL)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
+  const menu = useWatchDrawing(s => s.menu)
 
   const addShape = (type: 'circle' | 'rect') => {
     const size = 100
@@ -52,68 +53,75 @@ export default function ToolHeader({
   }
 
   return (
-    <View
-      style={{
-        height: 60,
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        padding: 10,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        left: 0,
-        zIndex: 10
-      }}
-    >
-      <TouchableOpacity
-        onPress={() => addShape('circle')}
-        style={[styles.icon]}
-      >
-        <CircleIcon width={20} height={20} fill='#ffffff' />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => addShape('rect')} style={[styles.icon]}>
-        <SquareIcon width={20} height={20} fill='#ffffff' />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() =>
-          setState({ menu: menu === 'drawing' ? 'default' : 'drawing' })
-        }
-        style={[styles.icon, menu === 'drawing' && styles.active]}
-      >
-        <BrushPenIcon
-          width={20}
-          height={20}
-          fill={`${menu === 'drawing' ? '#333' : '#FFF'}`}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setState({ menu: 'addText' })}
-        style={[styles.icon]}
-      >
-        <FontIcon width={20} height={20} fill='#FFF' />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.icon]}
-        onPress={() => deleteSelectedItem()}
-      >
-        <DeleteIcon width={20} height={20} fill='#FFF' />
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => exportImage()}>
-        <Text
+    <>
+      {baseURL && (
+        <View
           style={{
-            color: '#fff',
-            paddingHorizontal: 6,
-            fontSize: 16,
-            fontWeight: '600'
+            height: 60,
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            padding: 10,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            left: 0,
+            zIndex: 10
           }}
         >
-          Save
-        </Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity
+            onPress={() => addShape('circle')}
+            style={[styles.icon]}
+          >
+            <CircleIcon width={20} height={20} fill='#ffffff' />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => addShape('rect')}
+            style={[styles.icon]}
+          >
+            <SquareIcon width={20} height={20} fill='#ffffff' />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              setState({ menu: menu === 'drawing' ? 'default' : 'drawing' })
+            }
+            style={[styles.icon, menu === 'drawing' && styles.active]}
+          >
+            <BrushPenIcon
+              width={20}
+              height={20}
+              fill={`${menu === 'drawing' ? '#333' : '#FFF'}`}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setState({ menu: 'addText' })}
+            style={[styles.icon]}
+          >
+            <FontIcon width={20} height={20} fill='#FFF' />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.icon]}
+            onPress={() => deleteSelectedItem()}
+          >
+            <DeleteIcon width={20} height={20} fill='#FFF' />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => exportImage()}>
+            <Text
+              style={{
+                color: '#fff',
+                paddingHorizontal: 6,
+                fontSize: 16,
+                fontWeight: '600'
+              }}
+            >
+              Save
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </>
   )
 }
 

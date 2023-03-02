@@ -82,28 +82,33 @@ export default function TestCamera() {
       <View
         style={{
           height: 50,
-          padding: 10,
-          backgroundColor: '#fff',
-          flexDirection: 'row'
+          paddingHorizontal: 12,
+          paddingVertical: 6,
+          flexDirection: 'row',
+          justifyContent: 'space-between'
         }}
       >
         <View
           style={{
-            padding: 8,
+            paddingHorizontal: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
             borderRadius: 999,
             backgroundColor: '#aa99996d'
           }}
         >
-          <Text style={{ color: '#fff' }}>Use</Text>
+          <Text style={{ color: '#fff' }}>Retake</Text>
         </View>
         <View
           style={{
-            padding: 8,
+            paddingHorizontal: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
             borderRadius: 999,
             backgroundColor: '#aa99996d'
           }}
         >
-          <Text style={{ color: '#fff' }}>Use</Text>
+          <Text style={{ color: '#fff' }}>User</Text>
         </View>
       </View>
     </>

@@ -1,10 +1,7 @@
 import { Skia, SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
-import React, { memo, useEffect } from 'react'
+import React, { memo } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue
-} from 'react-native-reanimated'
+import Animated, { useSharedValue } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
 import { useDrawContext } from './contexts/DrawProvider'
 import useWatchDrawing from './hooks/useWatchDrawing'
@@ -26,10 +23,6 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
   const menu = useWatchDrawing(s => s.menu)
-
-  useEffect(() => {
-    console.log(index, 'ssss', menu)
-  }, [menu])
 
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
@@ -139,10 +132,10 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
     )
   )
 
-  const style = useAnimatedStyle(() =>
-    menu === 'drawing'
-      ? { position: 'absolute' }
-      : {
+  return (
+    <GestureDetector gesture={composed} userSelect='text'>
+      <Animated.View
+        style={{
           position: 'absolute',
           left: x,
           top: y,
@@ -155,13 +148,7 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
             { scale: scale.value },
             { rotateZ: `${rotation.value}rad` }
           ]
-        }
-  )
-
-  return (
-    <GestureDetector gesture={composed} userSelect='text'>
-      <Animated.View
-        style={style}
+        }}
         onTouchEnd={() => {
           context.commands.selectItem(index)
         }}
