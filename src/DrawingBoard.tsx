@@ -36,31 +36,40 @@ const getRectImage = ({
   canvasH?: number
 }) => {
   let rect: SkRect | undefined = undefined
-  // if (imgW && imgH && canvasW && canvasH) {
-  //   if (imgW / canvasW > imgH / canvasH) {
-  //     rect = {
-  //       width: canvasW,
-  //       height: canvasW * (imgH / imgW),
-  //       x: 0,
-  //       y: 0
-  //     }
-  //   } else {
-  //     rect = {
-  //       width: canvasH * (imgW / imgH),
-  //       height: canvasH,
-  //       x: 0,
-  //       y: 0
-  //     }
-  //   }
-  // }
-
-  if (imgW && imgH && canvasW && canvasH)
-    rect = {
-      x: 0,
-      y: 0,
-      width: imgW > canvasW ? imgW : canvasW,
-      height: imgH > canvasH ? imgH : canvasH
+  if (imgW && imgH && canvasW && canvasH) {
+    if (imgW / canvasW > imgH / canvasH) {
+      rect = {
+        width: canvasW,
+        height: canvasW * (imgH / imgW),
+        x: 0,
+        y: 0
+      }
+    } else {
+      rect = {
+        width: canvasH * (imgW / imgH),
+        height: canvasH,
+        x: 0,
+        y: 0
+      }
     }
+  }
+
+  if (imgW && imgH && canvasW && canvasH) {
+    rect = {
+      width: canvasW,
+      height: canvasH,
+      x: 0,
+      y: 0
+    }
+  }
+
+  // if (imgW && imgH && canvasW && canvasH)
+  //   rect = {
+  //     x: 0,
+  //     y: 0,
+  //     width: imgW > canvasW ? imgW : canvasW,
+  //     height: imgH > canvasH ? imgH : canvasH
+  //   }
 
   return rect
 }
@@ -79,6 +88,7 @@ export default function DrawingBoard({
   const context = useDrawContext()
   const touchHandler = useTouchDrawing()
   const compactElements = useWatchDrawing(s => s.elements)
+  const menu = useWatchDrawing(s => s.menu)
   const image = useImage(`file://${baseURL}`)
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
@@ -150,6 +160,7 @@ export default function DrawingBoard({
               index={index}
               debug={e.selected}
               dimensions={e.dimensions}
+              menu={menu}
             />
           ))}
         </View>

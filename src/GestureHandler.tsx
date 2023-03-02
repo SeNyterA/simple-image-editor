@@ -1,18 +1,27 @@
 import { Skia, SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
 import React, { memo } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, { useSharedValue } from 'react-native-reanimated'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue
+} from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
-import { useDrawContext } from './contexts/DrawProvider'
+import { ToobarMemu, useDrawContext } from './contexts/DrawProvider'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 interface GestureHandlerProps {
   debug?: boolean
   index: number
   dimensions: SkRect
+  menu: ToobarMemu
 }
 
-const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
+const GestureHandler = ({
+  debug,
+  index,
+  dimensions,
+  menu
+}: GestureHandlerProps) => {
   const context = useDrawContext()
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
@@ -22,7 +31,6 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
   const rotation = useSharedValue(0)
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
-  const menu = useWatchDrawing(s => s.menu)
 
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
@@ -132,23 +140,25 @@ const GestureHandler = ({ debug, index, dimensions }: GestureHandlerProps) => {
     )
   )
 
+  const style = useAnimatedStyle(() => ({
+    position: 'absolute',
+    left: x,
+    top: y,
+    width,
+    height,
+    backgroundColor: debug ? 'rgba(100, 200, 300, 0.4)' : 'transparent',
+    transform: [
+      { translateX: offset.value.x },
+      { translateY: offset.value.y },
+      { scale: scale.value },
+      { rotateZ: `${rotation.value}rad` }
+    ]
+  }))
+
   return (
     <GestureDetector gesture={composed} userSelect='text'>
       <Animated.View
-        style={{
-          position: 'absolute',
-          left: x,
-          top: y,
-          width,
-          height,
-          backgroundColor: debug ? 'rgba(100, 200, 300, 0.4)' : 'transparent',
-          transform: [
-            { translateX: offset.value.x },
-            { translateY: offset.value.y },
-            { scale: scale.value },
-            { rotateZ: `${rotation.value}rad` }
-          ]
-        }}
+        style={style}
         onTouchEnd={() => {
           context.commands.selectItem(index)
         }}

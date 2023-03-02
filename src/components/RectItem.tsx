@@ -28,7 +28,7 @@ export const RectItem = ({ element }: { element: ShapeElement }) => {
           />
         </Rect>
 
-        <Group
+        {/* <Group
           transform={[
             { translateX: width / 2 - 2 },
             { translateY: height / 2 - 2 }
@@ -41,7 +41,7 @@ export const RectItem = ({ element }: { element: ShapeElement }) => {
               strokeWidth={strokeWidth}
             />
           </Rect>
-        </Group>
+        </Group> */}
       </Group>
     </Group>
   )

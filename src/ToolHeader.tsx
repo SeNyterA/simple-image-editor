@@ -24,7 +24,7 @@ export default function ToolHeader({
     commands: { setState, deleteSelectedItem, getState }
   } = useDrawContext()
 
-  const baseURL = useWatchDrawing(s => s.baseURL)
+  const mode = useWatchDrawing(s => s.mode)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
   const menu = useWatchDrawing(s => s.menu)
 
@@ -54,7 +54,7 @@ export default function ToolHeader({
 
   return (
     <>
-      {baseURL && (
+      {mode === 'edit' && (
         <View
           style={{
             height: 60,

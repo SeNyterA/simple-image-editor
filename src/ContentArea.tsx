@@ -10,13 +10,13 @@ export default function ContentArea({
   innerRef: React.RefObject<SkiaDomView>
 }) {
   const urlBase = useWatchDrawing(s => s.baseURL)
+  const mode = useWatchDrawing(s => s.mode)
 
   return (
     <>
-      {urlBase ? (
+      {mode === 'edit' ? (
         <DrawingBoard innerRef={innerRef} baseURL={urlBase} />
       ) : (
-        // <ImgView />
         <TestCamera />
       )}
     </>

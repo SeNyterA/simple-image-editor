@@ -21,7 +21,7 @@ export default function TextEditor() {
   const insets = useSafeAreaInsets()
   const menu = useWatchDrawing(state => state.menu)
   const color = useWatchDrawing(state => state.color)
-  const baseURL = useWatchDrawing(state => state.baseURL)
+  const mode = useWatchDrawing(state => state.mode)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
   const font = useFont(RobotoMedium, 24)
 
@@ -120,7 +120,7 @@ export default function TextEditor() {
               )}
             </View>
 
-            {baseURL && <TextTool />}
+            {mode === 'edit' && <TextTool />}
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
