@@ -128,7 +128,7 @@ export default function TestCamera() {
               })
             }}
           >
-            <Text style={{ color: '#fff' }}>User</Text>
+            <Text style={{ color: '#fff' }}>Use photo</Text>
           </TouchableOpacity>
         </View>
       </>
