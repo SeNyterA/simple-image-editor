@@ -7,14 +7,14 @@ import Animated, {
   useSharedValue
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
-import { ToobarMemu, useDrawContext } from './contexts/DrawProvider'
+import { ActionMemu, useDrawContext } from './contexts/DrawProvider'
 import { DrawingElementType } from './contexts/type'
 
 interface GestureHandlerProps {
   debug?: boolean
   index: number
   dimensions: SkRect
-  menu: ToobarMemu
+  menu: ActionMemu
   itemType: DrawingElementType
 }
 
@@ -133,7 +133,7 @@ const GestureHandler = ({
   const editText = Gesture.LongPress().onEnd(() => {
     if (itemType === 'text')
       runOnJS(context.commands.setState)({
-        menu: 'addText'
+        action: 'addText'
       })
   })
 

@@ -35,7 +35,7 @@ export const useTouchDrawing = () => {
 
   return useTouchHandler({
     onStart: ({ x, y }) => {
-      switch (drawContext.state.menu) {
+      switch (drawContext.state.action) {
         case 'drawing': {
           const { color, size, pathType, elements } =
             drawContext.commands.getState()
@@ -61,7 +61,7 @@ export const useTouchDrawing = () => {
       prevPointRef.current = { x, y }
     },
     onActive: ({ x, y }) => {
-      switch (drawContext.state.menu) {
+      switch (drawContext.state.action) {
         case 'drawing': {
           if (drawContext.state.elements.length) {
             const element =
@@ -87,7 +87,7 @@ export const useTouchDrawing = () => {
       prevPointRef.current = { x, y }
     },
     onEnd: () => {
-      switch (drawContext.state.menu) {
+      switch (drawContext.state.action) {
         case 'drawing':
           if (drawContext.state.elements.length) {
             const elements = drawContext.commands.getState().elements

@@ -10,6 +10,8 @@ import {
 import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
 import { PhotoFile } from 'react-native-vision-camera'
+import ArrowItem from './components/ArrowItem'
+
 import { CircleItem } from './components/CircleItem'
 import PathItem from './components/PathItem'
 import { RectItem } from './components/RectItem'
@@ -88,7 +90,7 @@ export default function DrawingBoard({
   const context = useDrawContext()
   const touchHandler = useTouchDrawing()
   const compactElements = useWatchDrawing(s => s.elements)
-  const menu = useWatchDrawing(s => s.menu)
+  const menu = useWatchDrawing(s => s.action)
   const image = useImage(`file://${baseURL}`)
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
@@ -148,6 +150,8 @@ export default function DrawingBoard({
                       return <CircleItem element={e} key={index} />
                     case 'rect':
                       return <RectItem element={e} key={index} />
+                    case 'arrow':
+                      return <ArrowItem element={e} key={index} />
                   }
                 })}
               </Group>

@@ -37,6 +37,7 @@ import SendIcon from './icons/SendIcon.svg'
 import SelectAllIcon from './icons/SelectAllIcon.svg'
 import SquareIcon from './icons/SquareIcon.svg'
 import CircleIcon from './icons/CircleIcon.svg'
+import ArrowIcon from './icons/ArrowIcon.svg'
 
 export {
   ChevronLeft,
@@ -77,5 +78,6 @@ export {
   SendIcon,
   SelectAllIcon,
   SquareIcon,
-  CircleIcon
+  CircleIcon,
+  ArrowIcon
 }

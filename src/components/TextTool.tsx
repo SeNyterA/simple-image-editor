@@ -4,7 +4,7 @@ import useWatchDrawing from '../hooks/useWatchDrawing'
 import ColorPicker from './ColorPicker'
 import PathTypePicker from './PathTypePicker'
 export default function TextTool() {
-  const menu = useWatchDrawing(state => state.menu)
+  const menu = useWatchDrawing(state => state.action)
   return (
     <View
       style={{

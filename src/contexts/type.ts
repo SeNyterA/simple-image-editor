@@ -5,7 +5,7 @@ import {
 } from '@shopify/react-native-skia/lib/typescript/src/skia/types'
 
 export type PathType = 'normal' | 'dashed' | 'discreted'
-export type DrawingElementType = 'path' | 'text' | 'circle' | 'rect'
+export type DrawingElementType = 'path' | 'text' | 'circle' | 'rect' | 'arrow'
 
 export type DrawingElement = {
   type: DrawingElementType
@@ -33,7 +33,7 @@ export type PathElement = {
 }
 
 export type ShapeElement = {
-  type: 'rect' | 'circle'
+  type: 'rect' | 'circle' | 'arrow'
   color: Color
   matrix: SkMatrix
   dimensions: SkRect

@@ -2,6 +2,7 @@ import { rect, Skia, SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
+  ArrowIcon,
   BrushPenIcon,
   CircleIcon,
   DeleteIcon,
@@ -26,9 +27,9 @@ export default function ToolHeader({
 
   const mode = useWatchDrawing(s => s.mode)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
-  const menu = useWatchDrawing(s => s.menu)
+  const menu = useWatchDrawing(s => s.action)
 
-  const addShape = (type: 'circle' | 'rect') => {
+  const addShape = (type: 'circle' | 'rect' | 'arrow') => {
     const size = 100
     const dime = rect(
       (canvasSize.width - size) / 2,
@@ -42,13 +43,13 @@ export default function ToolHeader({
       dimensions: dime,
       matrix: Skia.Matrix(),
       color: getState().color,
-      size: 1
+      size: 2
     }
 
     const { elements } = getState()
     setState({
       elements: [...elements, e],
-      menu: 'default'
+      action: 'default'
     })
   }
 
@@ -70,6 +71,12 @@ export default function ToolHeader({
           }}
         >
           <TouchableOpacity
+            onPress={() => addShape('arrow')}
+            style={[styles.icon]}
+          >
+            <ArrowIcon width={20} height={20} fill='#ffffff' />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => addShape('circle')}
             style={[styles.icon]}
           >
@@ -83,7 +90,7 @@ export default function ToolHeader({
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() =>
-              setState({ menu: menu === 'drawing' ? 'default' : 'drawing' })
+              setState({ action: menu === 'drawing' ? 'default' : 'drawing' })
             }
             style={[styles.icon, menu === 'drawing' && styles.active]}
           >
@@ -94,7 +101,7 @@ export default function ToolHeader({
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setState({ menu: 'addText' })}
+            onPress={() => setState({ action: 'addText' })}
             style={[styles.icon]}
           >
             <FontIcon width={20} height={20} fill='#FFF' />

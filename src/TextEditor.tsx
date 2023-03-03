@@ -20,7 +20,7 @@ import useWatchDrawing from './hooks/useWatchDrawing'
 export default function TextEditor() {
   const { commands } = useDrawContext()
   const insets = useSafeAreaInsets()
-  const menu = useWatchDrawing(state => state.menu)
+  const menu = useWatchDrawing(state => state.action)
   const color = useWatchDrawing(state => state.color)
   const mode = useWatchDrawing(state => state.mode)
   const canvasSize = useWatchDrawing(s => s.canvasSize)
@@ -101,11 +101,11 @@ export default function TextEditor() {
                       const { elements } = commands.getState()
                       commands.setState({
                         elements: [...elements, textE],
-                        menu: 'default'
+                        action: 'default'
                       })
                     } else
                       commands.setState({
-                        menu: 'default'
+                        action: 'default'
                       })
                   }}
                   style={{

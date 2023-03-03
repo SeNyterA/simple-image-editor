@@ -4,7 +4,7 @@ import { Dimensions } from 'react-native'
 
 import { DrawingElement, PathType } from './type'
 
-export type ToobarMemu = 'drawing' | 'addText' | 'editText' | 'default'
+export type ActionMemu = 'drawing' | 'addText' | 'editText' | 'default'
 
 export type ToolbarMode = 'takePhoto' | 'edit'
 
@@ -16,7 +16,7 @@ export type CanvasSizeType = {
 export type DrawboardState = {
   baseURL: string | undefined
   mode: ToolbarMode
-  menu: ToobarMemu
+  action: ActionMemu
   elements: DrawingElement[]
   selectedElement: DrawingElement | undefined
   color: Color
@@ -48,7 +48,7 @@ const { width, height } = Dimensions.get('window')
 const createDrawProviderValue = (): DrawboardContextType => {
   const state: DrawboardState = {
     baseURL: undefined,
-    menu: 'default',
+    action: 'default',
     mode: 'takePhoto',
     elements: [],
     selectedElement: undefined,
