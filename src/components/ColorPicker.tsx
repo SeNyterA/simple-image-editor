@@ -27,6 +27,7 @@ export default function ColorPicker() {
           alignItems: 'center'
         }}
         style={{ height: 50 }}
+        keyboardShouldPersistTaps='always'
       >
         {colors.map((c, index) => (
           <Fragment key={index}>

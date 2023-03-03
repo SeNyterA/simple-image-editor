@@ -2,25 +2,28 @@ import { Skia, SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
 import React, { memo } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
 import { ToobarMemu, useDrawContext } from './contexts/DrawProvider'
-import useWatchDrawing from './hooks/useWatchDrawing'
+import { DrawingElementType } from './contexts/type'
 
 interface GestureHandlerProps {
   debug?: boolean
   index: number
   dimensions: SkRect
   menu: ToobarMemu
+  itemType: DrawingElementType
 }
 
 const GestureHandler = ({
   debug,
   index,
   dimensions,
-  menu
+  menu,
+  itemType
 }: GestureHandlerProps) => {
   const context = useDrawContext()
   const { x, y, width, height } = dimensions
@@ -31,7 +34,6 @@ const GestureHandler = ({
   const rotation = useSharedValue(0)
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
-
   useSharedValueEffect(() => {
     const elements = context.commands.getState().elements
 
@@ -128,12 +130,15 @@ const GestureHandler = ({
       savedScale.value = scale.value
     })
 
-  const select = Gesture.Tap()
-    .numberOfTaps(1)
-    .onEnd(() => {})
+  const editText = Gesture.LongPress().onEnd(() => {
+    if (itemType === 'text')
+      runOnJS(context.commands.setState)({
+        menu: 'addText'
+      })
+  })
 
   const composed = Gesture.Race(
-    select,
+    editText,
     Gesture.Simultaneous(
       dragGesture,
       Gesture.Simultaneous(zoomGesture, rotateGesture)

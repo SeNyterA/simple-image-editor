@@ -1,6 +1,7 @@
 import { rect, Skia, useFont } from '@shopify/react-native-skia'
 import React from 'react'
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   TextInput,
@@ -51,75 +52,74 @@ export default function TextEditor() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1, width: '100%', position: 'relative' }}
       >
-        <TouchableWithoutFeedback onPress={() => {}}>
+        <TouchableWithoutFeedback
+          style={{
+            flex: 1
+          }}
+          onPress={() => {
+            Keyboard.dismiss()
+          }}
+        >
           <View
             style={{
-              flex: 1
+              flex: 1,
+              justifyContent: 'center',
+              alignContent: 'center'
+            }}
+            onLayout={event => {
+              var { x, y, width, height } = event.nativeEvent.layout
             }}
           >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignContent: 'center'
-              }}
-              onLayout={event => {
-                var { x, y, width, height } = event.nativeEvent.layout
-              }}
-            >
-              {menu === 'addText' && (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <TextInput
-                    autoFocus
-                    defaultValue=''
-                    onEndEditing={({ nativeEvent: { text } }) => {
-                      if (!!font && text) {
-                        const aa = Skia.Path.MakeFromText(text, 0, 0, font)
-                        const width = (aa?.getBounds().width || 200) + 16
-                        const dime = rect(
-                          (canvasSize.width - width) / 2,
-                          (canvasSize.height - 40) / 2,
-                          width,
-                          40
-                        )
-
-                        const textE: TextElement = {
-                          type: 'text',
-                          dimensions: dime,
-                          matrix: Skia.Matrix(),
-                          font: font,
-                          text: text,
-                          color: color
-                        }
-
-                        const { elements } = commands.getState()
-
-                        commands.setState({
-                          elements: [...elements, textE],
-                          menu: 'default'
-                        })
+            {menu === 'addText' && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}
+              >
+                <TextInput
+                  autoFocus
+                  defaultValue=''
+                  onEndEditing={({ nativeEvent: { text } }) => {
+                    if (!!font && text) {
+                      const aa = Skia.Path.MakeFromText(text, 0, 0, font)
+                      const width = (aa?.getBounds().width || 200) + 16
+                      const dime = rect(
+                        (canvasSize.width - width) / 2,
+                        (canvasSize.height - 40) / 2,
+                        width,
+                        40
+                      )
+                      const textE: TextElement = {
+                        type: 'text',
+                        dimensions: dime,
+                        matrix: Skia.Matrix(),
+                        font: font,
+                        text: text,
+                        color: color
                       }
-                    }}
-                    onBlur={e => e.nativeEvent.text}
-                    style={{
-                      padding: 6,
-                      backgroundColor: color as any,
-                      marginHorizontal: 20,
-                      fontSize: 24,
-                      height: '100%',
-                      borderRadius: 6,
-                      textAlign: 'center'
-                    }}
-                  />
-                </View>
-              )}
-            </View>
-
+                      const { elements } = commands.getState()
+                      commands.setState({
+                        elements: [...elements, textE],
+                        menu: 'default'
+                      })
+                    } else
+                      commands.setState({
+                        menu: 'default'
+                      })
+                  }}
+                  style={{
+                    padding: 6,
+                    backgroundColor: color as any,
+                    marginHorizontal: 20,
+                    fontSize: 24,
+                    height: '100%',
+                    borderRadius: 6,
+                    textAlign: 'center'
+                  }}
+                />
+              </View>
+            )}
             {mode === 'edit' && <TextTool />}
           </View>
         </TouchableWithoutFeedback>

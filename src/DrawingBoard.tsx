@@ -161,6 +161,7 @@ export default function DrawingBoard({
               debug={e.selected}
               dimensions={e.dimensions}
               menu={menu}
+              itemType={e.type}
             />
           ))}
         </View>
