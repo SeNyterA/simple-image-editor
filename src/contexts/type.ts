@@ -9,9 +9,11 @@ export type DrawingElementType = 'path' | 'text' | 'circle' | 'rect' | 'arrow'
 
 export type DrawingElement = {
   type: DrawingElementType
+  id: string
 } & (TextElement | PathElement | ShapeElement)
 
 export type TextElement = {
+  id: string
   type: 'text'
   color: Color
   matrix: SkMatrix
@@ -22,6 +24,7 @@ export type TextElement = {
 }
 
 export type PathElement = {
+  id: string
   type: 'path'
   color: Color
   matrix: SkMatrix
@@ -33,6 +36,7 @@ export type PathElement = {
 }
 
 export type ShapeElement = {
+  id: string
   type: 'rect' | 'circle' | 'arrow'
   color: Color
   matrix: SkMatrix

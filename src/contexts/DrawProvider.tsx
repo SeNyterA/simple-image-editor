@@ -27,11 +27,12 @@ export type DrawboardState = {
 }
 
 export type DrawboardCommands = {
-  getState: () => DrawboardState
+  getState: <T>(cb: (state: DrawboardState) => T) => T
   setState: (newState: Partial<DrawboardState>) => void
   notify: () => void
   selectItem: (index: number) => void
   deleteSelectedItem: () => void
+  addElement: (e: DrawingElement) => void
 }
 
 export type DrawboardContextType = {
@@ -74,7 +75,7 @@ const createDrawProviderValue = (): DrawboardContextType => {
     notify: () => {
       notifyListeners(state)
     },
-    getState: () => state,
+    getState: cb => cb(state),
     selectItem: (index: number) => {
       state.elements = state.elements.map((e, idx) =>
         idx === index
@@ -88,6 +89,11 @@ const createDrawProviderValue = (): DrawboardContextType => {
     },
     deleteSelectedItem: () => {
       state.elements = state.elements.filter((e, idx) => !e.selected)
+      notifyListeners(state)
+    },
+
+    addElement: e => {
+      state.elements = [...state.elements, e]
       notifyListeners(state)
     }
   }

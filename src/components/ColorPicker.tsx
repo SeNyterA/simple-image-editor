@@ -36,7 +36,7 @@ export default function ColorPicker() {
               onPress={() =>
                 setState({
                   color: c,
-                  elements: getState().elements.map(e => ({
+                  elements: getState(s => s.elements).map(e => ({
                     ...e,
                     color: e.selected ? c : e.color
                   }))

@@ -39,16 +39,16 @@ export default function ToolHeader({
     )
 
     const e: ShapeElement = {
+      id: Math.random() + '',
       type: type,
       dimensions: dime,
       matrix: Skia.Matrix(),
-      color: getState().color,
+      color: getState(s => s.color),
       size: 2
     }
 
-    const { elements } = getState()
     setState({
-      elements: [...elements, e],
+      elements: [...getState(s => s.elements), e],
       action: 'default'
     })
   }

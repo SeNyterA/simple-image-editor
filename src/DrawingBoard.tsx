@@ -87,7 +87,9 @@ export default function DrawingBoard({
     width: width,
     height: height - 50
   })
-  const context = useDrawContext()
+  const {
+    commands: { setState }
+  } = useDrawContext()
   const touchHandler = useTouchDrawing()
   const compactElements = useWatchDrawing(s => s.elements)
   const menu = useWatchDrawing(s => s.action)
@@ -128,7 +130,7 @@ export default function DrawingBoard({
               ref={innerRef}
               onLayout={event => {
                 var { width, height } = event.nativeEvent.layout
-                context.commands.setState({
+                setState({
                   canvasSize: {
                     width,
                     height

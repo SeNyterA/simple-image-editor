@@ -18,7 +18,9 @@ import { TextElement } from './contexts/type'
 import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function TextEditor() {
-  const { commands } = useDrawContext()
+  const {
+    commands: { getState, setState }
+  } = useDrawContext()
   const insets = useSafeAreaInsets()
   const menu = useWatchDrawing(state => state.action)
   const color = useWatchDrawing(state => state.color)
@@ -91,6 +93,7 @@ export default function TextEditor() {
                         40
                       )
                       const textE: TextElement = {
+                        id: Math.random() + '',
                         type: 'text',
                         dimensions: dime,
                         matrix: Skia.Matrix(),
@@ -98,13 +101,13 @@ export default function TextEditor() {
                         text: text,
                         color: color
                       }
-                      const { elements } = commands.getState()
-                      commands.setState({
-                        elements: [...elements, textE],
+
+                      setState({
+                        elements: [...getState(s => s.elements), textE],
                         action: 'default'
                       })
                     } else
-                      commands.setState({
+                      setState({
                         action: 'default'
                       })
                   }}

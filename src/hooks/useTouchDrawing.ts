@@ -19,6 +19,7 @@ export const createPath = (
   const path = Skia.Path.Make()
   path.moveTo(x, y)
   return {
+    id: Math.random() + '',
     type: 'path',
     path,
     color,
@@ -31,16 +32,17 @@ export const createPath = (
 
 export const useTouchDrawing = () => {
   const prevPointRef = useRef<SkPoint>()
-  const drawContext = useDrawContext()
+  const {
+    commands: { getState, setState }
+  } = useDrawContext()
 
   return useTouchHandler({
     onStart: ({ x, y }) => {
-      switch (drawContext.state.action) {
+      switch (getState(s => s.action)) {
         case 'drawing': {
-          const { color, size, pathType, elements } =
-            drawContext.commands.getState()
+          const { color, size, pathType, elements } = getState(s => s)
 
-          drawContext.commands.setState({
+          setState({
             elements: [
               ...elements,
               createPath(x, y, color as any, size, pathType)
@@ -49,9 +51,11 @@ export const useTouchDrawing = () => {
           break
         }
         case 'default': {
-          const { elements } = drawContext.commands.getState()
-          drawContext.commands.setState({
-            elements: elements.map(e => ({ ...e, selected: false }))
+          setState({
+            elements: getState(s => s.elements).map(e => ({
+              ...e,
+              selected: false
+            }))
           })
           break
         }
@@ -61,12 +65,12 @@ export const useTouchDrawing = () => {
       prevPointRef.current = { x, y }
     },
     onActive: ({ x, y }) => {
-      switch (drawContext.state.action) {
+      switch (getState(s => s.action)) {
         case 'drawing': {
-          if (drawContext.state.elements.length) {
-            const element =
-              drawContext.state.elements[drawContext.state.elements.length - 1]
-
+          const element = getState(
+            s => s.elements[getState(s => s.elements.length - 1)]
+          )
+          if (element) {
             const xMid = (prevPointRef.current!.x + x) / 2
             const yMid = (prevPointRef.current!.y + y) / 2
 
@@ -87,14 +91,14 @@ export const useTouchDrawing = () => {
       prevPointRef.current = { x, y }
     },
     onEnd: () => {
-      switch (drawContext.state.action) {
+      switch (getState(e => e.action)) {
         case 'drawing':
-          if (drawContext.state.elements.length) {
-            const elements = drawContext.commands.getState().elements
-            const element = elements[elements.length - 1]
+          const elements = getState(e => e.elements)
+          const element = elements[elements.length - 1]
 
+          if (element) {
             if (element.type === 'path') {
-              drawContext.commands.setState({
+              setState({
                 elements: elements.map((e, index) => ({
                   ...e,
                   dimensions:

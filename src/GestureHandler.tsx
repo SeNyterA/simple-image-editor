@@ -25,7 +25,9 @@ const GestureHandler = ({
   menu,
   itemType
 }: GestureHandlerProps) => {
-  const context = useDrawContext()
+  const {
+    commands: { getState, setState, selectItem }
+  } = useDrawContext()
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
   const start = useSharedValue({ x: 0, y: 0 })
@@ -35,10 +37,8 @@ const GestureHandler = ({
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
   useSharedValueEffect(() => {
-    const elements = context.commands.getState().elements
-
-    context.commands.setState({
-      elements: elements.map((e, idx) =>
+    setState({
+      elements: getState(s => s.elements).map((e, idx) =>
         idx === index
           ? {
               ...e,
@@ -132,7 +132,7 @@ const GestureHandler = ({
 
   const editText = Gesture.LongPress().onEnd(() => {
     if (itemType === 'text')
-      runOnJS(context.commands.setState)({
+      runOnJS(setState)({
         action: 'addText'
       })
   })
@@ -165,7 +165,7 @@ const GestureHandler = ({
       <Animated.View
         style={[style, { zIndex: menu === 'drawing' ? -10 : 10 }]}
         onTouchEnd={() => {
-          context.commands.selectItem(index)
+          selectItem(index)
         }}
       />
     </GestureDetector>
