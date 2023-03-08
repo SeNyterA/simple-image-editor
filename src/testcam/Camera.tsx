@@ -3,14 +3,19 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Camera, useCameraDevices } from 'react-native-vision-camera'
 import { useDrawContext } from '../contexts/DrawProvider'
 import useWatchDrawing from '../hooks/useWatchDrawing'
-export default function TestCamera() {
+
+interface Props {
+  exportFn?: (url: string) => void
+}
+
+export default function CameraContent({ exportFn }: Props) {
   const devices = useCameraDevices('wide-angle-camera')
   // const isFocused = useIsFocused()
   const camera = useRef<Camera>(null)
   const {
     commands: { setState }
   } = useDrawContext()
-  const baseURL = useWatchDrawing(s => s.baseURL)
+  const tmpURL = useWatchDrawing(s => s.tmpURL)
   const device = devices.back
 
   if (device == null) return <View />
@@ -31,14 +36,14 @@ export default function TestCamera() {
             style={StyleSheet.absoluteFill}
             device={device}
             photo={true}
-            isActive={!baseURL}
+            isActive={!tmpURL}
           />
 
-          {baseURL && (
+          {tmpURL && (
             <Image
               style={[StyleSheet.absoluteFill, { zIndex: 100 }]}
               source={{
-                uri: 'file:' + baseURL || ''
+                uri: 'file:' + tmpURL || ''
               }}
             />
           )}
@@ -62,7 +67,7 @@ export default function TestCamera() {
 
                 if (data?.path) {
                   setState({
-                    baseURL: data.path
+                    tmpURL: data.path
                   })
                 }
               }}
@@ -96,38 +101,61 @@ export default function TestCamera() {
             justifyContent: 'space-between'
           }}
         >
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 999,
-              backgroundColor: '#aa99996d'
-            }}
-            onPress={() => {
-              setState({
-                baseURL: undefined
-              })
-            }}
-          >
-            <Text style={{ color: '#fff' }}>Retake</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              paddingHorizontal: 12,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 999,
-              backgroundColor: '#aa99996d'
-            }}
-            onPress={() => {
-              setState({
-                mode: 'edit'
-              })
-            }}
-          >
-            <Text style={{ color: '#fff' }}>Use photo</Text>
-          </TouchableOpacity>
+          {tmpURL && (
+            <>
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 999,
+                  backgroundColor: '#aa99996d'
+                }}
+                onPress={() => {
+                  setState({
+                    tmpURL: undefined
+                  })
+                }}
+              >
+                <Text style={{ color: '#fff', fontWeight: '600' }}>Retake</Text>
+              </TouchableOpacity>
+
+              <View style={{ flex: 1 }}></View>
+
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 999,
+                  backgroundColor: '#aa99996d',
+                  marginRight: 10
+                }}
+                onPress={() => {
+                  setState({
+                    mode: 'edit'
+                  })
+                }}
+              >
+                <Text style={{ color: '#fff', fontWeight: '600' }}>Edit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  paddingHorizontal: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 999,
+                  backgroundColor: '#aa99996d'
+                }}
+                onPress={() => {
+                  exportFn && exportFn(tmpURL)
+                }}
+              >
+                <Text style={{ color: '#fff', fontWeight: '600' }}>Upload</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </>
     )

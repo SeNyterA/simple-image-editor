@@ -14,7 +14,8 @@ export type CanvasSizeType = {
 }
 
 export type DrawboardState = {
-  baseURL: string | undefined
+  tmpURL: string | undefined
+  editURL: string | undefined
   mode: ToolbarMode
   action: ActionMemu
   elements: DrawingElement[]
@@ -50,7 +51,8 @@ const createDrawProviderValue = (
   defaultValue?: Partial<DrawboardState>
 ): DrawboardContextType => {
   const state: DrawboardState = {
-    baseURL: undefined,
+    tmpURL: undefined,
+    editURL: undefined,
     action: 'drawing',
     mode: 'takePhoto',
     elements: [],

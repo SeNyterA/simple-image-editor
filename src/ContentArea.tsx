@@ -2,22 +2,28 @@ import { SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import DrawingBoard from './DrawingBoard'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import TestCamera from './testcam/TestCamera'
+import CameraContent from './testcam/Camera'
 
 export default function ContentArea({
-  innerRef
+  innerRef,
+  exportFn
 }: {
   innerRef: React.RefObject<SkiaDomView>
+  exportFn?: (base64: string) => void
 }) {
-  const urlBase = useWatchDrawing(s => s.baseURL)
+  const tmpURL = useWatchDrawing(s => s.tmpURL)
+  const editURL = useWatchDrawing(s => s.editURL)
   const mode = useWatchDrawing(s => s.mode)
+  const file = editURL || `file://${tmpURL}`
+
+  console.log(file)
 
   return (
     <>
       {mode === 'edit' ? (
-        <DrawingBoard innerRef={innerRef} baseURL={urlBase} />
+        <DrawingBoard innerRef={innerRef} tmpURL={file} />
       ) : (
-        <TestCamera />
+        <CameraContent exportFn={exportFn} />
       )}
     </>
   )
