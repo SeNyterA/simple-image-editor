@@ -81,7 +81,7 @@ export default function DrawingBoard({
   baseURL
 }: {
   innerRef: React.RefObject<SkiaDomView>
-  baseURL: string
+  baseURL?: string
 }) {
   const [canvasSize, setCanvasSize] = useState({
     width: width,
@@ -93,7 +93,12 @@ export default function DrawingBoard({
   const touchHandler = useTouchDrawing()
   const compactElements = useWatchDrawing(s => s.elements)
   const menu = useWatchDrawing(s => s.action)
-  const image = useImage(`file://${baseURL}`)
+  // const image = useImage(`file://${baseURL}`)
+
+  const image = useImage(
+    'https://cdn.discordapp.com/attachments/824562218414243851/1082716690871222282/IMG_3647.png'
+  )
+
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
     canvasW: canvasSize.width,

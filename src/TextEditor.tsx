@@ -37,7 +37,7 @@ export default function TextEditor() {
           right: 0,
           bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom || 32,
           paddingTop: insets.top
         }
       : {
@@ -45,7 +45,7 @@ export default function TextEditor() {
           right: 0,
           bottom: 0,
           position: 'absolute',
-          paddingBottom: insets.bottom
+          paddingBottom: insets.bottom 
         }
 
   return (

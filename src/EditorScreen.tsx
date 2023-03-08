@@ -3,35 +3,45 @@ import { ImageFormat, useCanvasRef } from '@shopify/react-native-skia'
 import React from 'react'
 import { SafeAreaView, StatusBar, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import Share from 'react-native-share'
 import ContentArea from './ContentArea'
-import { useDrawProvider } from './contexts/DrawProvider'
+import { DrawboardState, useDrawProvider } from './contexts/DrawProvider'
 import TextEditor from './TextEditor'
 import ToolHeader from './ToolHeader'
 
-export default function EditorScreen() {
-  const DrawProvider = useDrawProvider()
+interface Props {
+  exportFn: (base64: string) => void
+  goBackFn: () => void
+  defaultState?: Partial<DrawboardState>
+}
+
+export default function EditorScreen({
+  exportFn,
+  goBackFn,
+  defaultState
+}: Props) {
+  const DrawProvider = useDrawProvider({ ...defaultState })
   const skiaViewRef = useCanvasRef()
 
-  const share = async () => {
+  const calData = async () => {
     const image = skiaViewRef.current?.makeImageSnapshot()
     if (image) {
       const data = image.encodeToBase64(ImageFormat.PNG, 100)
       const url = `data:image/png;base64,${data}`
-      const shareOptions = {
-        title: 'Sharing image from awesome drawing app',
-        message: 'My drawing',
-        url,
-        failOnCancel: false
-      }
-      await Share.open(shareOptions)
+      // const shareOptions = {
+      //   title: 'Sharing image from awesome drawing app',
+      //   message: 'My drawing',
+      //   url,
+      //   failOnCancel: false
+      // }
+      // await Share.open(shareOptions)
+      exportFn(url)
     }
   }
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={[{ flex: 1, backgroundColor: '#000000' }]}>
-        <StatusBar barStyle='light-content' />
+        <StatusBar barStyle='light-content' backgroundColor='#000' />
         <DrawProvider>
           <View
             style={{
@@ -40,7 +50,11 @@ export default function EditorScreen() {
               overflow: 'hidden'
             }}
           >
-            <ToolHeader innerRef={skiaViewRef} exportImage={share} />
+            <ToolHeader
+              innerRef={skiaViewRef}
+              exportImage={calData}
+              goBack={goBackFn}
+            />
             <ContentArea innerRef={skiaViewRef} />
           </View>
 

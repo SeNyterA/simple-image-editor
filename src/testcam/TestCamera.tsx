@@ -10,9 +10,7 @@ export default function TestCamera() {
   const {
     commands: { setState }
   } = useDrawContext()
-
   const baseURL = useWatchDrawing(s => s.baseURL)
-
   const device = devices.back
 
   if (device == null) return <View />

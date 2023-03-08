@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
   ArrowIcon,
   BrushPenIcon,
+  ChevronLeft,
   CircleIcon,
   DeleteIcon,
   FontIcon,
@@ -16,10 +17,12 @@ import useWatchDrawing from './hooks/useWatchDrawing'
 
 export default function ToolHeader({
   innerRef,
-  exportImage
+  exportImage,
+  goBack
 }: {
   innerRef: React.RefObject<SkiaDomView>
-  exportImage: () => void
+  exportImage?: () => void
+  goBack?: () => void
 }) {
   const {
     commands: { setState, deleteSelectedItem, getState }
@@ -70,6 +73,12 @@ export default function ToolHeader({
             zIndex: 10
           }}
         >
+          {!!goBack && (
+            <TouchableOpacity onPress={() => goBack()} style={[styles.back]}>
+              <ChevronLeft width={24} height={24} fill='#ffffff' />
+            </TouchableOpacity>
+          )}
+          <View style={{ flex: 1 }}></View>
           <TouchableOpacity
             onPress={() => addShape('arrow')}
             style={[styles.icon]}
@@ -114,18 +123,20 @@ export default function ToolHeader({
             <DeleteIcon width={20} height={20} fill='#FFF' />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => exportImage()}>
-            <Text
-              style={{
-                color: '#fff',
-                paddingHorizontal: 6,
-                fontSize: 16,
-                fontWeight: '600'
-              }}
-            >
-              Save
-            </Text>
-          </TouchableOpacity>
+          {!!exportImage && (
+            <TouchableOpacity onPress={() => exportImage()}>
+              <Text
+                style={{
+                  color: '#fff',
+                  paddingHorizontal: 6,
+                  fontSize: 16,
+                  fontWeight: '600'
+                }}
+              >
+                Save
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </>
@@ -141,6 +152,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 10,
     backgroundColor: '#fff5'
+  },
+  back: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   active: {
     backgroundColor: '#fff'

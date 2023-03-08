@@ -4,14 +4,14 @@ import { useDrawContext } from '../contexts/DrawProvider'
 import useWatchDrawing from '../hooks/useWatchDrawing'
 
 const colors = [
+  '#f00',
   '#FFF',
   '#000',
   '#0FF',
   '#0F0',
   '#FF0',
   '#ffa200',
-  '#fe5f9f',
-  '#ff0000'
+  '#fe5f9f'
 ]
 
 export default function ColorPicker() {

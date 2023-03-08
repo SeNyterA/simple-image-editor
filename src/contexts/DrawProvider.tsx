@@ -21,7 +21,6 @@ export type DrawboardState = {
   selectedElement: DrawingElement | undefined
   color: Color
   size: number
-  backgroundColor: Color | undefined
   pathType: PathType
   canvasSize: CanvasSizeType
 }
@@ -46,21 +45,24 @@ export const DrawContext = createContext<DrawboardContextType | undefined>(
 )
 
 const { width, height } = Dimensions.get('window')
-const createDrawProviderValue = (): DrawboardContextType => {
+
+const createDrawProviderValue = (
+  defaultValue?: Partial<DrawboardState>
+): DrawboardContextType => {
   const state: DrawboardState = {
     baseURL: undefined,
-    action: 'default',
+    action: 'drawing',
     mode: 'takePhoto',
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',
     size: 4,
-    color: '#fff',
-    backgroundColor: '#000',
+    color: '#f00',
     canvasSize: {
       width: width,
       height: height - 50
-    }
+    },
+    ...defaultValue
   }
 
   const listeners = [] as ((state: DrawboardState) => void)[]
@@ -116,8 +118,8 @@ export const useDrawContext = () => {
   return drawContext!
 }
 
-export const useDrawProvider = () => {
-  const drawContext = useMemo(() => createDrawProviderValue(), [])
+export const useDrawProvider = (defaultValue?: Partial<DrawboardState>) => {
+  const drawContext = useMemo(() => createDrawProviderValue(defaultValue), [])
 
   return ({ children }: { children: React.ReactNode }) => (
     <DrawContext.Provider value={drawContext}>{children}</DrawContext.Provider>
