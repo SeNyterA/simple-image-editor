@@ -2,7 +2,7 @@ import { SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
 import DrawingBoard from './DrawingBoard'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import CameraContent from './testcam/Camera'
+import CameraContent from './camera/CameraContent'
 
 export default function ContentArea({
   innerRef,
