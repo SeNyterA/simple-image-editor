@@ -53,9 +53,24 @@ export default function CameraContent({ exportFn }: Props) {
               right: 0,
               flexDirection: 'row',
               justifyContent: 'center',
+              alignItems: 'center',
               zIndex: tmpURL ? -1 : 1
             }}
           >
+            {/* <TouchableOpacity
+              style={{
+                borderRadius: 1000,
+                height: 40,
+                width: 40,
+                backgroundColor: '#fffa',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text style={{ color: '#333' }}>1:1</Text>
+            </TouchableOpacity> */}
+
+
             <TouchableOpacity
               onPress={async () => {
                 const data = await camera?.current?.takePhoto({
@@ -113,6 +128,19 @@ export default function CameraContent({ exportFn }: Props) {
                 />
               </View>
             </TouchableOpacity>
+
+            {/* <TouchableOpacity
+              style={{
+                borderRadius: 1000,
+                height: 40,
+                width: 40,
+                backgroundColor: '#fffa',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text style={{ color: '#333' }}>4:3</Text>
+            </TouchableOpacity> */}
           </View>
         </View>
 
