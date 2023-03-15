@@ -1,16 +1,14 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-import PathTypePicker from './PathTypePicker'
-import ColorPicker from './ColorPicker'
+import { View } from 'react-native'
 import useWatchDrawing from '../hooks/useWatchDrawing'
-import { ToobarMemu } from '../contexts/DrawProvider'
-
+import ColorPicker from './ColorPicker'
+import PathTypePicker from './PathTypePicker'
 export default function TextTool() {
-  const menu = useWatchDrawing(state => state.menu) as ToobarMemu
+  const menu = useWatchDrawing(state => state.action)
   return (
     <View
       style={{
-        height: 60,
+        height: 50,
         alignItems: 'center',
         flexDirection: 'row',
         paddingHorizontal: 12,

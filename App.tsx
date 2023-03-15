@@ -1,12 +1,18 @@
 import React from 'react'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import EditorScreen from './src/EditorScreen'
 
 const App = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <EditorScreen />
-    </GestureHandlerRootView>
+    <EditorScreen
+      exportFn={data => console.log(data)}
+      goBackFn={() => {
+        console.log('goback')
+      }}
+      defaultState={{
+        editURL:
+          'https://cdn.discordapp.com/attachments/824562218414243851/1082716690871222282/IMG_3647.png'
+      }}
+    />
   )
 }
 

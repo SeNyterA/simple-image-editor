@@ -1,37 +1,33 @@
-import {
-  Skia,
-  SkMatrix,
-  SkRect,
-  useSharedValueEffect
-} from '@shopify/react-native-skia'
-import React from 'react'
-import { TextInput } from 'react-native'
+import { Skia, SkRect, useSharedValueEffect } from '@shopify/react-native-skia'
+import React, { memo } from 'react'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
+  runOnJS,
   useAnimatedStyle,
   useSharedValue
 } from 'react-native-reanimated'
 import { identity4, processTransform3d, toMatrix3 } from 'react-native-redash'
-import { useDrawContext } from './contexts/DrawProvider'
-import useWatchDrawing from './hooks/useWatchDrawing'
+import { ActionMemu, useDrawContext } from './contexts/DrawProvider'
+import { DrawingElementType } from './contexts/type'
 
 interface GestureHandlerProps {
-  matrix: SkMatrix
-  dimensions: SkRect
   debug?: boolean
-  text: string
   index: number
-  color: any
+  dimensions: SkRect
+  menu: ActionMemu
+  itemType: DrawingElementType
 }
 
-export const GestureHandler = ({
-  matrix: skMatrix,
-  dimensions,
+const GestureHandler = ({
   debug,
-  text,
   index,
-  color
+  dimensions,
+  menu,
+  itemType
 }: GestureHandlerProps) => {
+  const {
+    commands: { getState, setState, selectItem }
+  } = useDrawContext()
   const { x, y, width, height } = dimensions
   const offset = useSharedValue({ x: 0, y: 0 })
   const start = useSharedValue({ x: 0, y: 0 })
@@ -40,16 +36,17 @@ export const GestureHandler = ({
   const rotation = useSharedValue(0)
   const savedRotation = useSharedValue(0)
   const matrix = useSharedValue(identity4)
-
-  const context = useDrawContext()
-
-  const state = useWatchDrawing(state => state.textElements[index])
-
   useSharedValueEffect(() => {
-    const aa = context.state.textElements[index]
-    if (aa.type === 'text') {
-      aa.matrix = Skia.Matrix(toMatrix3(matrix.value) as any)
-    }
+    setState({
+      elements: getState(s => s.elements).map((e, idx) =>
+        idx === index
+          ? {
+              ...e,
+              matrix: Skia.Matrix(toMatrix3(matrix.value) as any)
+            }
+          : e
+      )
+    })
   }, matrix)
 
   const dragGesture = Gesture.Pan()
@@ -133,12 +130,15 @@ export const GestureHandler = ({
       savedScale.value = scale.value
     })
 
-  const select = Gesture.Tap()
-    .numberOfTaps(1)
-    .onEnd(() => {})
+  const editText = Gesture.LongPress().onEnd(() => {
+    if (itemType === 'text')
+      runOnJS(setState)({
+        action: 'addText'
+      })
+  })
 
   const composed = Gesture.Race(
-    select,
+    editText,
     Gesture.Simultaneous(
       dragGesture,
       Gesture.Simultaneous(zoomGesture, rotateGesture)
@@ -161,22 +161,15 @@ export const GestureHandler = ({
   }))
 
   return (
-    <GestureDetector gesture={composed}>
-      <Animated.View style={style}>
-        <TextInput
-          editable={false}
-          style={{
-            backgroundColor: color || '#fff',
-            fontSize: 24,
-            height: '100%',
-            borderRadius: 6,
-            textAlign: 'center',
-            textAlignVertical: 'center'
-          }}
-        >
-          {text}
-        </TextInput>
-      </Animated.View>
+    <GestureDetector gesture={composed} userSelect='text'>
+      <Animated.View
+        style={[style, { zIndex: menu === 'drawing' ? -10 : 10 }]}
+        onTouchEnd={() => {
+          selectItem(index)
+        }}
+      />
     </GestureDetector>
   )
 }
+
+export default memo(GestureHandler)

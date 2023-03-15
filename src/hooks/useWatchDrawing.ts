@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDrawContext } from '../contexts/DrawProvider'
 import { DrawboardState } from './../contexts/DrawProvider'
 
-export default function useWatchDrawing(cb: (state: DrawboardState) => any) {
+export default function useWatchDrawing<T>(cb: (state: DrawboardState) => T) {
   const drawContext = useDrawContext()
   const [state, setState] = useState(cb(drawContext.state))
   useEffect(() => {

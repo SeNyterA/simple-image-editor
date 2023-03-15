@@ -7,59 +7,59 @@ import {
   rrect,
   Text
 } from '@shopify/react-native-skia'
-import { useDrawContext } from './contexts/DrawProvider'
-import { TextElement } from './contexts/type'
+import useWatchDrawing from './hooks/useWatchDrawing'
 
 interface LocationStickerProps {
-  index: number
-
-  textElement: TextElement
+  id: string
 }
 
-export const LocationSticker = ({
-  index,
-  textElement
-}: LocationStickerProps) => {
-  return (
-    <Group
-      transform={[
-        { translateX: textElement.dimensions.x },
-        { translateY: textElement.dimensions.y }
-      ]}
-    >
+export const LocationSticker = ({ id }: LocationStickerProps) => {
+  const textElement = useWatchDrawing(s =>
+    s.elements.find(e => e.type === 'text' && e.id === id)
+  )
+  if (textElement?.type === 'text')
+    return (
       <Group
-        matrix={textElement.matrix}
-        origin={{
-          x: textElement.dimensions.width / 2,
-          y: textElement.dimensions.height / 2
-        }}
+        transform={[
+          { translateX: textElement.dimensions.x },
+          { translateY: textElement.dimensions.y }
+        ]}
       >
-        <RoundedRect
-          color={textElement.color}
-          rect={rrect(
-            rect(
-              0,
-              0,
-              textElement.dimensions.width,
-              textElement.dimensions.height
-            ),
-            6,
-            6
-          )}
-        />
         <Group
-          transform={[
-            { translateX: 8 },
-            {
-              translateY:
-                textElement.dimensions.height / 2 +
-                (textElement.dimensions.height - textElement.font.getSize()) / 2
-            }
-          ]}
+          matrix={textElement.matrix}
+          origin={{
+            x: textElement.dimensions.width / 2,
+            y: textElement.dimensions.height / 2
+          }}
         >
-          <Text text={textElement.text || ''} font={textElement.font} />
+          <RoundedRect
+            color={textElement.color}
+            rect={rrect(
+              rect(
+                0,
+                0,
+                textElement.dimensions.width,
+                textElement.dimensions.height
+              ),
+              6,
+              6
+            )}
+          />
+          <Group
+            transform={[
+              { translateX: 8 },
+              {
+                translateY:
+                  textElement.dimensions.height / 2 +
+                  (textElement.dimensions.height - textElement.font.getSize()) /
+                    2
+              }
+            ]}
+          >
+            <Text text={textElement.text || ''} font={textElement.font} />
+          </Group>
         </Group>
       </Group>
-    </Group>
-  )
+    )
+  else return <></>
 }

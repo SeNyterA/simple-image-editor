@@ -1,20 +1,12 @@
+import { Color } from '@shopify/react-native-skia'
 import React, { createContext, useContext, useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
-import { DrawingElement, PathType, TextElement } from './type'
+import { DrawingElement, PathType } from './type'
 
-export type ToobarMemu =
-  | 'drawing'
-  | 'chooseSticker'
-  | 'selection'
-  | 'colors'
-  | 'text'
-  | 'save'
-  | 'delete'
-  | 'addText'
-  | 'editText'
+export type ActionMemu = 'drawing' | 'addText' | 'editText' | 'default'
 
-export type ToolbarMode = 'export' | 'edit'
+export type ToolbarMode = 'takePhoto' | 'edit'
 
 export type CanvasSizeType = {
   width: number
@@ -22,31 +14,25 @@ export type CanvasSizeType = {
 }
 
 export type DrawboardState = {
+  tmpURL: string | undefined
+  editURL: string | undefined
   mode: ToolbarMode
-  menu: ToobarMemu
+  action: ActionMemu
   elements: DrawingElement[]
-  textElements: TextElement[]
   selectedElement: DrawingElement | undefined
-  color: any
+  color: Color
   size: number
-  backgroundColor?: any
   pathType: PathType
   canvasSize: CanvasSizeType
 }
 
 export type DrawboardCommands = {
-  setMenu: (menu: ToobarMemu) => void
-  setElements: (elements: DrawingElement[]) => void
-  setColor: (color: any) => void
-  setSize: (size: number) => void
-  setMode: (mode: ToolbarMode) => void
-  setPathType: (pathType: PathType) => void
-  setBackgroundColor: (backgroundColor?: any) => void
-  setSelectedElement: (selectedElement: DrawingElement | undefined) => void
-  addElement: (element: DrawingElement) => void
-  removeElement: (index: number) => void
-  addTextElement: (elements: TextElement) => void
-  setCanvasSize: (canvasSize: CanvasSizeType) => void
+  getState: <T>(cb: (state: DrawboardState) => T) => T
+  setState: (newState: Partial<DrawboardState>) => void
+  notify: () => void
+  selectItem: (index: number) => void
+  deleteSelectedItem: () => void
+  addElement: (e: DrawingElement) => void
 }
 
 export type DrawboardContextType = {
@@ -55,76 +41,63 @@ export type DrawboardContextType = {
   addListener: (listener: (state: DrawboardState) => void) => () => void
 }
 
-const DrawContext = createContext<DrawboardContextType | undefined>(undefined)
+export const DrawContext = createContext<DrawboardContextType | undefined>(
+  undefined
+)
 
 const { width, height } = Dimensions.get('window')
-const createDrawProviderValue = (): DrawboardContextType => {
+
+const createDrawProviderValue = (
+  defaultValue?: Partial<DrawboardState>
+): DrawboardContextType => {
   const state: DrawboardState = {
-    menu: 'drawing',
-    mode: 'edit',
+    tmpURL: undefined,
+    editURL: undefined,
+    action: 'drawing',
+    mode: 'takePhoto',
     elements: [],
     selectedElement: undefined,
     pathType: 'normal',
     size: 4,
-    color: '#fff',
-    backgroundColor: '#000',
-    textElements: [],
+    color: '#f00',
     canvasSize: {
       width: width,
       height: height - 50
-    }
+    },
+    ...defaultValue
   }
 
   const listeners = [] as ((state: DrawboardState) => void)[]
   const notifyListeners = (s: DrawboardState) => listeners.forEach(l => l(s))
 
   const commands: DrawboardCommands = {
-    setMenu: (menu: ToobarMemu) => {
-      state.menu = menu
+    setState: (newState: Partial<DrawboardState>) => {
+      const keys = Object.keys(newState) as (keyof DrawboardState)[]
+      keys.forEach(e => (state[e] = newState[e]))
       notifyListeners(state)
     },
-    setElements: (elements: DrawingElement[]) => {
-      state.elements = elements
+    notify: () => {
       notifyListeners(state)
     },
-    addElement: (element: DrawingElement) => {
-      state.elements = [...state.elements, element]
+    getState: cb => cb(state),
+    selectItem: (index: number) => {
+      state.elements = state.elements.map((e, idx) =>
+        idx === index
+          ? {
+              ...e,
+              selected: !e.selected
+            }
+          : e
+      )
       notifyListeners(state)
     },
-    setColor: (color: any) => {
-      state.color = color
+    deleteSelectedItem: () => {
+      state.elements = state.elements.filter((e, idx) => !e.selected)
       notifyListeners(state)
     },
-    setSize: (size: number) => {
-      state.size = size
-      notifyListeners(state)
-    },
-    setPathType: (pathType: PathType) => {
-      state.pathType = pathType
-      notifyListeners(state)
-    },
-    setBackgroundColor: (color: any) => {
-      state.backgroundColor = color
-      notifyListeners(state)
-    },
-    setSelectedElement: (element?: DrawingElement | undefined) => {
-      state.selectedElement = element
-      notifyListeners(state)
-    },
-    removeElement: index => {
-      state.elements.pop()
-      notifyListeners(state)
-    },
-    addTextElement: (element: TextElement) => {
-      state.textElements = [...state.textElements, element]
-      notifyListeners(state)
-    },
-    setMode: (mode: ToolbarMode) => {
-      state.mode = mode
-      notifyListeners(state)
-    },
-    setCanvasSize: canvasSize => {
-      state.canvasSize = canvasSize
+
+    addElement: e => {
+      state.elements = [...state.elements, e]
       notifyListeners(state)
     }
   }
@@ -147,8 +120,8 @@ export const useDrawContext = () => {
   return drawContext!
 }
 
-export const useDrawProvider = () => {
-  const drawContext = useMemo(() => createDrawProviderValue(), [])
+export const useDrawProvider = (defaultValue?: Partial<DrawboardState>) => {
+  const drawContext = useMemo(() => createDrawProviderValue(defaultValue), [])
 
   return ({ children }: { children: React.ReactNode }) => (
     <DrawContext.Provider value={drawContext}>{children}</DrawContext.Provider>

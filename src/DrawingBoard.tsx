@@ -1,26 +1,31 @@
 import {
   Canvas,
-  DashPathEffect,
-  DiscretePathEffect,
   Group,
   Image,
-  ImageFormat,
-  Path,
   SkiaDomView,
+  SkImage,
   SkRect,
   useImage
 } from '@shopify/react-native-skia'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Dimensions, View } from 'react-native'
-import Share from 'react-native-share'
-import { ToolbarMode, useDrawContext } from './contexts/DrawProvider'
-import { DrawingElement, TextElement } from './contexts/type'
-import { GestureHandler } from './GestureHandler'
+import { PhotoFile } from 'react-native-vision-camera'
+import ArrowItem from './components/ArrowItem'
+
+import { CircleItem } from './components/CircleItem'
+import PathItem from './components/PathItem'
+import { RectItem } from './components/RectItem'
+import TextItem from './components/TextItem'
+import { useDrawContext } from './contexts/DrawProvider'
+import GestureHandler from './GestureHandler'
 import { useTouchDrawing } from './hooks/useTouchDrawing'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import { LocationSticker } from './LocationSticker'
-
 const { width, height } = Dimensions.get('window')
+
+type Image = PhotoFile & {
+  image: SkImage | null
+}
+
 const getRectImage = ({
   imgW,
   imgH,
@@ -50,99 +55,51 @@ const getRectImage = ({
       }
     }
   }
+
+  if (imgW && imgH && canvasW && canvasH) {
+    rect = {
+      width: canvasW,
+      height: canvasH,
+      x: 0,
+      y: 0
+    }
+  }
+
+  // if (imgW && imgH && canvasW && canvasH)
+  //   rect = {
+  //     x: 0,
+  //     y: 0,
+  //     width: imgW > canvasW ? imgW : canvasW,
+  //     height: imgH > canvasH ? imgH : canvasH
+  //   }
+
   return rect
 }
 
-const wait = timeout => {
-  return new Promise(resolve => setTimeout(resolve, timeout))
-}
-
 export default function DrawingBoard({
-  innerRef
+  innerRef,
+  tmpURL
 }: {
   innerRef: React.RefObject<SkiaDomView>
+  tmpURL?: string
 }) {
   const [canvasSize, setCanvasSize] = useState({
     width: width,
     height: height - 50
   })
-  const [preExport, setPreExport] = useState(false)
+  const {
+    commands: { setState }
+  } = useDrawContext()
   const touchHandler = useTouchDrawing()
-  const image = useImage(
-    'https://cdn.discordapp.com/attachments/824562218414243851/1061832691596677201/IMG_2512.jpg'
-  )
-  const context = useDrawContext()
-  const elements = useWatchDrawing(s => s.elements) as DrawingElement[]
-  const textElements = useWatchDrawing(s => s.textElements) as DrawingElement[]
-  const mode = useWatchDrawing(s => s.mode) as ToolbarMode
+  const compactElements = useWatchDrawing(s => s.elements)
+  const menu = useWatchDrawing(s => s.action)
+  // const image = useImage(`file://${tmpURL}`)
 
-  const elementComponents = useMemo(
-    () =>
-      elements.map((element: DrawingElement, index) => {
-        switch (element.type) {
-          case 'path':
-            switch (element.pathType) {
-              case 'discreted':
-                return (
-                  <Group key={index}>
-                    <Path
-                      path={element.path}
-                      color={element.color}
-                      style='stroke'
-                      strokeWidth={element.size}
-                      strokeCap='round'
-                    >
-                      <DiscretePathEffect length={3} deviation={5} />
-                    </Path>
-                  </Group>
-                )
-              case 'dashed':
-                return (
-                  <Group key={index}>
-                    <Path
-                      path={element.path}
-                      color={element.color}
-                      style='stroke'
-                      strokeWidth={element.size}
-                      strokeCap='round'
-                    >
-                      <DashPathEffect
-                        intervals={[element.size * 2, element.size * 2]}
-                      />
-                    </Path>
-                  </Group>
-                )
-              default:
-                return (
-                  <Path
-                    key={index}
-                    path={element.path}
-                    color={element.color}
-                    style='stroke'
-                    strokeWidth={element.size}
-                    strokeCap='round'
-                  />
-                )
-            }
+  // const image = useImage(
+  //   'https://cdn.discordapp.com/attachments/824562218414243851/1082716690871222282/IMG_3647.png'
+  // )
 
-          default:
-        }
-      }),
-
-    [elements]
-  )
-
-  const elementTextComponents = useMemo(
-    () =>
-      textElements.map((e: DrawingElement, index) => (
-        <LocationSticker
-          key={index}
-          index={index}
-          textElement={context.state.textElements[index]}
-        />
-      )),
-    [textElements]
-  )
+  const image = useImage(tmpURL)
 
   const imgRect = getRectImage({
     canvasH: canvasSize.height,
@@ -151,89 +108,78 @@ export default function DrawingBoard({
     imgW: image?.width()
   })
 
-  const share = async () => {
-    await wait(100)
-    const image = innerRef.current?.makeImageSnapshot()
-    if (image) {
-      const data = image.encodeToBase64(ImageFormat.PNG, 100)
-      const url = `data:image/png;base64,${data}`
-      const shareOptions = {
-        title: 'Sharing image from awesome drawing app',
-        message: 'My drawing',
-        url,
-        failOnCancel: false
-      }
-      await Share.open(shareOptions)
-      setPreExport(false)
-      await context.commands.setMode('edit')
-    }
-  }
-
-  useEffect(() => {
-    if (mode === 'export') {
-      setPreExport(true)
-    }
-  }, [mode])
-
-  useEffect(() => {
-    if (preExport) share()
-  }, [preExport])
-
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-      onLayout={event => {
-        var { x, y, width, height } = event.nativeEvent.layout
-        setCanvasSize({
-          width,
-          height
-        })
-      }}
-    >
-      <View style={{ overflow: 'hidden', borderRadius: 10 }}>
-        {!!imgRect && (
-          <Canvas
-            onTouch={touchHandler}
-            style={{
-              ...imgRect
-            }}
-            ref={innerRef}
-            onLayout={event => {
-              var { x, y, width, height } = event.nativeEvent.layout
-              context.commands.setCanvasSize({
-                width,
-                height
-              })
-            }}
-          >
-            <Group
-            // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+    <>
+      <View
+        style={{
+          flex: 1,
+          borderRadius: 20,
+          overflow: 'hidden',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff3'
+        }}
+        onLayout={event => {
+          var { width, height } = event.nativeEvent.layout
+          setCanvasSize({
+            width,
+            height
+          })
+        }}
+      >
+        <View>
+          {!!imgRect && (
+            <Canvas
+              onTouch={touchHandler}
+              style={{
+                ...imgRect
+              }}
+              ref={innerRef}
+              onLayout={event => {
+                var { width, height } = event.nativeEvent.layout
+                setState({
+                  canvasSize: {
+                    width,
+                    height
+                  }
+                })
+              }}
             >
-              {!!image && <Image image={image} fit='contain' {...imgRect} />}
-              {elementComponents}
-              {mode === 'export' && elementTextComponents}
-            </Group>
-          </Canvas>
-        )}
+              <Group
+              // clip={rrect(rect(0, 0, imgRect.width, imgRect.height), 10, 10)}
+              >
+                {!!image && <Image image={image} fit='cover' {...imgRect} />}
+                {compactElements.map((e, index) => {
+                  switch (e.type) {
+                    case 'path':
+                      return <PathItem element={e} key={index} />
+                    case 'text':
+                      return <TextItem textElement={e} key={index} />
+                    case 'circle':
+                      return <CircleItem element={e} key={index} />
+                    case 'rect':
+                      return <RectItem element={e} key={index} />
+                    case 'arrow':
+                      return <ArrowItem element={e} key={index} />
+                  }
+                })}
+              </Group>
+            </Canvas>
+          )}
 
-        {textElements.map(
-          (e, index) =>
-            e.type === 'text' && (
-              <GestureHandler
-                key={index}
-                dimensions={e.dimensions}
-                matrix={e.matrix}
-                text={e.text}
-                index={index}
-                color={e.color}
-              />
-            )
-        )}
+          {compactElements.map((e, index) => (
+            <GestureHandler
+              key={index}
+              index={index}
+              debug={e.selected}
+              dimensions={e.dimensions}
+              menu={menu}
+              itemType={e.type}
+            />
+          ))}
+        </View>
       </View>
-    </View>
+      <View style={{ height: 50, padding: 10 }} />
+    </>
   )
 }
