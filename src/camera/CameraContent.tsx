@@ -1,5 +1,6 @@
+import ImageEditor from '@react-native-community/image-editor'
 import React, { useRef } from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native'
 import { Camera, useCameraDevices } from 'react-native-vision-camera'
 import { useDrawContext } from '../contexts/DrawProvider'
 import useWatchDrawing from '../hooks/useWatchDrawing'
@@ -8,9 +9,11 @@ interface Props {
   exportFn?: (url: string) => void
 }
 
+const windowWidth = Dimensions.get('window').width
+const windowHeight = Dimensions.get('window').height
+
 export default function CameraContent({ exportFn }: Props) {
   const devices = useCameraDevices('wide-angle-camera')
-  // const isFocused = useIsFocused()
   const camera = useRef<Camera>(null)
   const {
     commands: { setState }
@@ -33,20 +36,14 @@ export default function CameraContent({ exportFn }: Props) {
         >
           <Camera
             ref={camera}
-            style={StyleSheet.absoluteFill}
+            style={{
+              width: windowWidth,
+              height: (windowWidth * 3) / 4
+            }}
             device={device}
             photo={true}
             isActive={!tmpURL}
           />
-
-          {tmpURL && (
-            <Image
-              style={[StyleSheet.absoluteFill, { zIndex: 100 }]}
-              source={{
-                uri: 'file:' + tmpURL || ''
-              }}
-            />
-          )}
 
           <View
             style={{
@@ -55,9 +52,25 @@ export default function CameraContent({ exportFn }: Props) {
               left: 0,
               right: 0,
               flexDirection: 'row',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: tmpURL ? -1 : 1
             }}
           >
+            {/* <TouchableOpacity
+              style={{
+                borderRadius: 1000,
+                height: 40,
+                width: 40,
+                backgroundColor: '#fffa',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text style={{ color: '#333' }}>1:1</Text>
+            </TouchableOpacity> */}
+
+
             <TouchableOpacity
               onPress={async () => {
                 const data = await camera?.current?.takePhoto({
@@ -66,9 +79,34 @@ export default function CameraContent({ exportFn }: Props) {
                 })
 
                 if (data?.path) {
-                  setState({
-                    tmpURL: data.path
-                  })
+                  const width =
+                    data.width < data.height ? data.width : data.height
+
+                  const height =
+                    data.width < data.height ? data.height : data.width
+
+                  const cropData = {
+                    offset: {
+                      x: 0,
+                      y: (height - (width * 3) / 4) / 2
+                    },
+                    size: {
+                      height: (width * 3) / 4,
+                      width: width
+                    }
+                  }
+
+                  ImageEditor.cropImage(data?.path, cropData)
+                    .then(tmpFile => {
+                      setState({
+                        tmpURL: tmpFile
+                      })
+                    })
+                    .catch(reason => {
+                      setState({
+                        tmpURL: data?.path
+                      })
+                    })
                 }
               }}
             >
@@ -90,8 +128,22 @@ export default function CameraContent({ exportFn }: Props) {
                 />
               </View>
             </TouchableOpacity>
+
+            {/* <TouchableOpacity
+              style={{
+                borderRadius: 1000,
+                height: 40,
+                width: 40,
+                backgroundColor: '#fffa',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text style={{ color: '#333' }}>4:3</Text>
+            </TouchableOpacity> */}
           </View>
         </View>
+
         <View
           style={{
             height: 50,

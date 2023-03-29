@@ -12,6 +12,7 @@
     "pod": "cd ios && pod install"
   },
   "dependencies": {
+    "@react-native-community/image-editor": "^2.3.0",
     "@shopify/react-native-skia": "^0.1.175",
     "react": "18.2.0",
     "react-native": "0.70.6",

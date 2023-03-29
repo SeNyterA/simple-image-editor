@@ -26,7 +26,7 @@ type Image = PhotoFile & {
   image: SkImage | null
 }
 
-const getRectImage = ({
+const getRectImageFull = ({
   imgW,
   imgH,
   canvasW,
@@ -73,6 +73,38 @@ const getRectImage = ({
   //     height: imgH > canvasH ? imgH : canvasH
   //   }
 
+  return rect
+}
+
+const getRectImage = ({
+  imgW,
+  imgH,
+  canvasW,
+  canvasH
+}: {
+  imgW?: number
+  imgH?: number
+  canvasW?: number
+  canvasH?: number
+}) => {
+  let rect: SkRect | undefined = undefined
+  if (imgW && imgH && canvasW && canvasH) {
+    if (imgW / canvasW > imgH / canvasH) {
+      rect = {
+        width: canvasW,
+        height: canvasW * (imgH / imgW),
+        x: 0,
+        y: 0
+      }
+    } else {
+      rect = {
+        width: canvasH * (imgW / imgH),
+        height: canvasH,
+        x: 0,
+        y: 0
+      }
+    }
+  }
   return rect
 }
 
@@ -175,6 +207,7 @@ export default function DrawingBoard({
               dimensions={e.dimensions}
               menu={menu}
               itemType={e.type}
+              id={e.id}
             />
           ))}
         </View>

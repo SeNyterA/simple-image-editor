@@ -2,7 +2,7 @@ import { Color } from '@shopify/react-native-skia'
 import React, { createContext, useContext, useMemo } from 'react'
 import { Dimensions } from 'react-native'
 
-import { DrawingElement, PathType } from './type'
+import { DrawingElement, PathType, TextElement } from './type'
 
 export type ActionMemu = 'drawing' | 'addText' | 'editText' | 'default'
 
@@ -19,7 +19,7 @@ export type DrawboardState = {
   mode: ToolbarMode
   action: ActionMemu
   elements: DrawingElement[]
-  selectedElement: DrawingElement | undefined
+  editTextElementId?: string
   color: Color
   size: number
   pathType: PathType
@@ -56,7 +56,6 @@ const createDrawProviderValue = (
     action: 'drawing',
     mode: 'takePhoto',
     elements: [],
-    selectedElement: undefined,
     pathType: 'normal',
     size: 4,
     color: '#f00',

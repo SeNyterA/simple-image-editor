@@ -14,6 +14,7 @@ interface GestureHandlerProps {
   debug?: boolean
   index: number
   dimensions: SkRect
+  id: string
   menu: ActionMemu
   itemType: DrawingElementType
 }
@@ -23,7 +24,8 @@ const GestureHandler = ({
   index,
   dimensions,
   menu,
-  itemType
+  itemType,
+  id
 }: GestureHandlerProps) => {
   const {
     commands: { getState, setState, selectItem }
@@ -133,7 +135,8 @@ const GestureHandler = ({
   const editText = Gesture.LongPress().onEnd(() => {
     if (itemType === 'text')
       runOnJS(setState)({
-        action: 'addText'
+        action: 'addText',
+        editTextElementId: id
       })
   })
 
@@ -165,7 +168,13 @@ const GestureHandler = ({
       <Animated.View
         style={[style, { zIndex: menu === 'drawing' ? -10 : 10 }]}
         onTouchEnd={() => {
-          selectItem(index)
+          menu === 'default' && selectItem(index)
+          // itemType === 'text' &&
+          //   menu === 'default' &&
+          //   setState({
+          //     action: 'addText',
+          //     editTextElementId: id
+          //   })
         }}
       />
     </GestureDetector>

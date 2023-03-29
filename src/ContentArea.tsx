@@ -1,8 +1,8 @@
 import { SkiaDomView } from '@shopify/react-native-skia'
 import React from 'react'
+import CameraContent from './camera/CameraContent'
 import DrawingBoard from './DrawingBoard'
 import useWatchDrawing from './hooks/useWatchDrawing'
-import CameraContent from './testcam/Camera'
 
 export default function ContentArea({
   innerRef,
@@ -15,8 +15,6 @@ export default function ContentArea({
   const editURL = useWatchDrawing(s => s.editURL)
   const mode = useWatchDrawing(s => s.mode)
   const file = editURL || `file://${tmpURL}`
-
-  console.log(file)
 
   return (
     <>
