@@ -66,14 +66,14 @@ If you would like to contribute to Simple Image Editor, please fork the reposito
 
 ## Demo
 
-<p float="left">
-  <img src="imgs/img_1.png"  width="33%" />
-  <img src="imgs/img_2.png"  width="33%" /> 
-  <img src="imgs/img_3.png"  width="33%" />
-  <img src="imgs/img_4.png"  width="33%" />
-  <img src="imgs/img_5.png"  width="33%" /> 
-  <img src="imgs/img_6.png"  width="33%" />
-</p>
+<div >
+  <img src="imgs/img_1.png"  width="32%" />
+  <img src="imgs/img_2.png"  width="32%" /> 
+  <img src="imgs/img_3.png"  width="32%" />
+  <img src="imgs/img_4.png"  width="32%" />
+  <img src="imgs/img_5.png"  width="32%" /> 
+  <img src="imgs/img_6.png"  width="32%" />
+</div>
 
 
 
