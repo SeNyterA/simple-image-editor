@@ -58,7 +58,7 @@ const createDrawProviderValue = (
     elements: [],
     pathType: 'normal',
     size: 4,
-    color: '#f00',
+    color: '#000',
     canvasSize: {
       width: width,
       height: height - 50

@@ -4,9 +4,9 @@ import { useDrawContext } from '../contexts/DrawProvider'
 import useWatchDrawing from '../hooks/useWatchDrawing'
 
 const colors = [
-  '#f00',
   '#FFF',
   '#000',
+  '#f00',
   '#0FF',
   '#0F0',
   '#FF0',
