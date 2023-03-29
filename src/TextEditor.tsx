@@ -22,11 +22,29 @@ export default function TextEditor() {
     commands: { getState, setState }
   } = useDrawContext()
   const insets = useSafeAreaInsets()
-  const menu = useWatchDrawing(state => state.action)
-  const color = useWatchDrawing(state => state.color)
-  const mode = useWatchDrawing(state => state.mode)
-  const canvasSize = useWatchDrawing(s => s.canvasSize)
+  const {
+    action: menu,
+    color,
+    mode,
+    canvasSize,
+    editTextElementId
+  } = useWatchDrawing(
+    ({ action, color, mode, canvasSize, editTextElementId }) => ({
+      action,
+      color,
+      mode,
+      canvasSize,
+      editTextElementId
+    })
+  )
   const font = useFont(RobotoMedium, 24)
+
+  const editTextElement = getState(
+    state =>
+      state.elements.find(e => e.id === editTextElementId) as
+        | TextElement
+        | undefined
+  )
 
   const visible: ViewStyle =
     menu === 'addText'
@@ -45,7 +63,7 @@ export default function TextEditor() {
           right: 0,
           bottom: 0,
           position: 'absolute',
-          paddingBottom: insets.bottom 
+          paddingBottom: insets.bottom
         }
 
   return (
@@ -81,7 +99,7 @@ export default function TextEditor() {
               >
                 <TextInput
                   autoFocus
-                  defaultValue=''
+                  defaultValue={editTextElement?.text || ''}
                   onEndEditing={({ nativeEvent: { text } }) => {
                     if (!!font && text) {
                       const aa = Skia.Path.MakeFromText(text, 0, 0, font)
@@ -93,7 +111,7 @@ export default function TextEditor() {
                         40
                       )
                       const textE: TextElement = {
-                        id: Math.random() + '',
+                        id: editTextElement?.id || Math.random() + '',
                         type: 'text',
                         dimensions: dime,
                         matrix: Skia.Matrix(),
@@ -102,10 +120,22 @@ export default function TextEditor() {
                         color: color
                       }
 
-                      setState({
-                        elements: [...getState(s => s.elements), textE],
-                        action: 'default'
-                      })
+                      if (editTextElement) {
+                        setState({
+                          elements: [
+                            ...getState(s => s.elements).map(e =>
+                              e.id === editTextElement.id ? textE : e
+                            )
+                          ],
+                          action: 'default',
+                          editTextElementId: undefined
+                        })
+                      } else
+                        setState({
+                          elements: [...getState(s => s.elements), textE],
+                          action: 'default',
+                          editTextElementId: undefined
+                        })
                     } else
                       setState({
                         action: 'default'
