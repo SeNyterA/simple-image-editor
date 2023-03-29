@@ -1,9 +1,13 @@
-import ImageEditor from '@react-native-community/image-editor'
-import React, { useRef } from 'react'
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native'
 import { Camera, useCameraDevices } from 'react-native-vision-camera'
 import { useDrawContext } from '../contexts/DrawProvider'
-import useWatchDrawing from '../hooks/useWatchDrawing'
 
 interface Props {
   exportFn?: (url: string) => void
@@ -15,10 +19,11 @@ const windowHeight = Dimensions.get('window').height
 export default function CameraContent({ exportFn }: Props) {
   const devices = useCameraDevices('wide-angle-camera')
   const camera = useRef<Camera>(null)
+  const [imgURL, setImgURL] = useState<string>()
   const {
     commands: { setState }
   } = useDrawContext()
-  const tmpURL = useWatchDrawing(s => s.tmpURL)
+
   const device = devices.back
 
   if (device == null) return <View />
@@ -36,13 +41,14 @@ export default function CameraContent({ exportFn }: Props) {
         >
           <Camera
             ref={camera}
-            style={{
-              width: windowWidth,
-              height: (windowWidth * 3) / 4
-            }}
+            // style={{
+            //   width: windowWidth,
+            //   height: (windowWidth * 3) / 4
+            // }}
+            style={StyleSheet.absoluteFill}
             device={device}
             photo={true}
-            isActive={!tmpURL}
+            isActive={!imgURL}
           />
 
           <View
@@ -54,7 +60,7 @@ export default function CameraContent({ exportFn }: Props) {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              zIndex: tmpURL ? -1 : 1
+              zIndex: imgURL ? -1 : 1
             }}
           >
             {/* <TouchableOpacity
@@ -70,7 +76,6 @@ export default function CameraContent({ exportFn }: Props) {
               <Text style={{ color: '#333' }}>1:1</Text>
             </TouchableOpacity> */}
 
-
             <TouchableOpacity
               onPress={async () => {
                 const data = await camera?.current?.takePhoto({
@@ -78,35 +83,41 @@ export default function CameraContent({ exportFn }: Props) {
                   enableAutoRedEyeReduction: true
                 })
 
+                console.log(data?.path)
+
                 if (data?.path) {
-                  const width =
-                    data.width < data.height ? data.width : data.height
+                  setImgURL(data?.path)
+                  // setState({
+                  //   tmpURL: data?.path
+                  // })
+                  // const width =
+                  //   data.width < data.height ? data.width : data.height
 
-                  const height =
-                    data.width < data.height ? data.height : data.width
+                  // const height =
+                  //   data.width < data.height ? data.height : data.width
 
-                  const cropData = {
-                    offset: {
-                      x: 0,
-                      y: (height - (width * 3) / 4) / 2
-                    },
-                    size: {
-                      height: (width * 3) / 4,
-                      width: width
-                    }
-                  }
+                  // const cropData = {
+                  //   offset: {
+                  //     x: 0,
+                  //     y: (height - (width * 3) / 4) / 2
+                  //   },
+                  //   size: {
+                  //     height: (width * 3) / 4,
+                  //     width: width
+                  //   }
+                  // }
 
-                  ImageEditor.cropImage(data?.path, cropData)
-                    .then(tmpFile => {
-                      setState({
-                        tmpURL: tmpFile
-                      })
-                    })
-                    .catch(reason => {
-                      setState({
-                        tmpURL: data?.path
-                      })
-                    })
+                  // ImageEditor.cropImage(data?.path, cropData)
+                  //   .then(tmpFile => {
+                  //     setState({
+                  //       tmpURL: tmpFile
+                  //     })
+                  //   })
+                  //   .catch(reason => {
+                  //     setState({
+                  //       tmpURL: data?.path
+                  //     })
+                  //   })
                 }
               }}
             >
@@ -153,7 +164,7 @@ export default function CameraContent({ exportFn }: Props) {
             justifyContent: 'space-between'
           }}
         >
-          {tmpURL && (
+          {imgURL && (
             <>
               <TouchableOpacity
                 style={{
@@ -164,9 +175,7 @@ export default function CameraContent({ exportFn }: Props) {
                   backgroundColor: '#aa99996d'
                 }}
                 onPress={() => {
-                  setState({
-                    tmpURL: undefined
-                  })
+                  setImgURL(undefined)
                 }}
               >
                 <Text style={{ color: '#fff', fontWeight: '600' }}>Retake</Text>
@@ -185,7 +194,8 @@ export default function CameraContent({ exportFn }: Props) {
                 }}
                 onPress={() => {
                   setState({
-                    mode: 'edit'
+                    mode: 'edit',
+                    tmpURL: imgURL
                   })
                 }}
               >
@@ -201,7 +211,7 @@ export default function CameraContent({ exportFn }: Props) {
                   backgroundColor: '#aa99996d'
                 }}
                 onPress={() => {
-                  exportFn && exportFn(tmpURL)
+                  exportFn && exportFn(imgURL)
                 }}
               >
                 <Text style={{ color: '#fff', fontWeight: '600' }}>Upload</Text>

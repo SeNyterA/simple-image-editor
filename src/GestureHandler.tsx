@@ -51,6 +51,17 @@ const GestureHandler = ({
     })
   }, matrix)
 
+  setState({
+    elements: getState(s => s.elements).map((e, idx) =>
+      idx === index
+        ? {
+            ...e,
+            matrix: Skia.Matrix(toMatrix3(matrix.value) as any)
+          }
+        : e
+    )
+  })
+
   const dragGesture = Gesture.Pan()
     .averageTouches(true)
     .onUpdate(e => {
