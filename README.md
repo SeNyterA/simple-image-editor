@@ -17,10 +17,10 @@ To install Simple Image Editor, follow these steps:
 1. Install React Native and set up your development environment.
 2. Make sure you have installed all the dependencies listed in the [package.json](https://github.com/SeNyterA/simple-image-editor/blob/master/package.json).
 3. Grant camera access permission for both iOS and Android to use the capture image feature.
-4. Add import 'react-native-gesture-handler' to your index.js file.
+4. Add import `react-native-gesture-handler` to your `index.js` file.
 
 ## Basic Usage
-To use Simple Image Editor, copy the /src folder of the module into your project and call the EditorScreen component while passing the necessary props:
+To use Simple Image Editor, copy the `/src` folder of the module into your project and call the `EditorScreen` component while passing the necessary props:
 
 ```javascript
 
