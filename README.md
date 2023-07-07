@@ -1,4 +1,4 @@
-# Simple Image Editor
+# Simple Image Editor - SE346.N21
 
 ## Introduction
 
